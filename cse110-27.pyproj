@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{a2af84cc-d540-420b-9bc2-5766530aea26}</ProjectGuid>
+    <ProjectHome>..\..\BYU-I\cse110-27\</ProjectHome>
+    <StartupFile>W04\mealPriceCalculator.py</StartupFile>
+    <SearchPath />
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <ProjectTypeGuids>{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <InterpreterId />
+    <IsWindowsApplication>False</IsWindowsApplication>
+    <TestFramework>none</TestFramework>
+    <UnitTestPattern>test*.py</UnitTestPattern>
+    <UnitTestRootDirectory>.</UnitTestRootDirectory>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+  <PropertyGroup>
+    <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="W01\favoriteColor.py" />
+    <Compile Include="W01\Intro To Python Development\hello.py" />
+    <Compile Include="W01\Intro To Python Development\helloworld.py" />
+    <Compile Include="W01\Intro To Python Development\print.py" />
+    <Compile Include="W02\checkPoint.py" />
+    <Compile Include="W02\idBadge.py" />
+    <Compile Include="W02\madLibs.py" />
+    <Compile Include="W03\areaMath.py" />
+    <Compile Include="W03\checkPoint.py" />
+    <Compile Include="W03\mealPriceCalculator.py" />
+    <Compile Include="W04\fahrenheitToCelsius.py" />
+    <Compile Include="W04\mealPriceCalculator.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="W01" />
+    <Folder Include="W01\Intro To Python Development" />
+    <Folder Include="W02" />
+    <Folder Include="W03" />
+    <Folder Include="W04" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
+</Project>
