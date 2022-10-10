@@ -26,6 +26,8 @@
             1)  For this assignment, you can earn +5 extra credit points by showing your program to at least two other people to
                 have them play it. After they play it, briefly show them your code and explain how it works.
             *** Presented and explained to my co-workers Mark Brewer and CLint Lambert.
+                    Mark Brewer commented that he liked the input validation and handling.
+                    Clint Lambert commented that he liked the modulus used in the bad response exit check
         Milestone Requirements
             At the end of Lesson 05, to help make sure you are on track to finish the assignment, you need to complete the following:
             1)  The program is working for the first question and possible choices, and displays a follow-up response to each
