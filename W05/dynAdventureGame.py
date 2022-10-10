@@ -9,9 +9,9 @@
             5)  Making different choices should take you to different scenarios. (You shouldn't have the same result for different
                 choices.)
             6)  Choices should only work for the correct question.
-            7)  In other words, if one scenario resulted in choices of Run/Hide, but another resulted in choices Follow/Look, you
+                In other words, if one scenario resulted in choices of Run/Hide, but another resulted in choices Follow/Look, you
                 should not be able to respond with "Follow" to the question that asked for Run/Hide.
-            8)  A good way to accomplish this is to have a series of nested if statements. (That is, the print and then the next
+                A good way to accomplish this is to have a series of nested if statements. (That is, the print and then the next
                 if statement will be within the body/block of the first if statement.)
             9)  For each question, you should provide an "else" clause to handle the case that the user tries to type something
                 other than the possible choices. It is up to you how to handle this case.
