@@ -335,12 +335,15 @@ def get_all_lines(values):
 
 def isPercent(response):
     # response[len(response) - 1] get the last character of the string
-    return response[len(response) - 1] == "%"
+    if type(response) == type(""):
+        return response[len(response) - 1] == "%"
+    else:
+        return False
 
 def percent(response):
     if isPercent(response):
         # response[ : len(response) - 1] gets all the characters except the last of the string
-        return int(response[ : len(response) - 1])
+        return float(response[ : len(response) - 1])
     else:
         raise NotAPercent(f"{response} is not a %")
 
@@ -350,6 +353,8 @@ def percent_rate(response):
 def discount_default(response):
     if response == "":
         return "5%"
+    else:
+        return response
 
 def request_discount(values):
     values[discount_amount_key] = -0.001
@@ -359,6 +364,7 @@ def request_discount(values):
             values[discount_percent_key] = percent_rate(discount_string)
             values[discount_amount_key] = values[subtotal_key] * values[discount_percent_key]
         except NotAPercent:
+            ...
             values[discount_amount_key] = float(discount_string)
             values[discount_percent_key] = values[discount_amount_key] / values[subtotal_key]
     return values
@@ -377,7 +383,9 @@ def tax_rate(values):
     values[tax_rate_key] = 0.0
     while values[tax_rate_key] <= 0.0:
         try:
-            values[tax_rate_key] = float(input("What is the sales tax rate percent? ")) / 100
+            temp = input("What is the sales tax rate percent? ")
+            if temp[len(temp)-1] == "%": temp=temp[:len(temp)-1]
+            values[tax_rate_key] = float(temp) / 100
         except  ValueError:
             values[tax_rate_key] = 0.06
     values[sales_tax_key] = values[discounted_subtotal_key] * values[tax_rate_key]
@@ -387,6 +395,8 @@ def tax_rate(values):
 def tip_default(response):
     if response == "":
         return "10%"
+    else:
+        return response
 
 def request_tip(values):
     print(f"${(values[subtotal_key] * .1):.2f} = 10%; ${(values[subtotal_key] * .15):.2f} = 15%; ${(values[subtotal_key] * .2):.2f} = 20%")
