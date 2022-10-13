@@ -111,8 +111,8 @@ if (grade_mod >= 7.0) and (letter not in ["A","F"]):
     letter = f"{letter}+"
 #added in version 1.2
 #changed in version 1.3
-#elif grade_mod <= 3.0:
-elif (grade_mod <= 3.0) and (letter not in ["F"]) and grade != 100.0:
+#elif grade_mod < 3.0:
+elif (grade_mod < 3.0) and (letter not in ["F"]) and grade != 100.0:
 #added in version 1.2
     letter = f"{letter}-"
 #if grade >= 70.0:
