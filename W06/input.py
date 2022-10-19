@@ -22,19 +22,17 @@
         output:  pass the invalid response value if the value retrieved from the user is not valid.
 """
 
-from heapq import merge
-
-
 def input_string(question: str, retry_message: str, valid_list: str = "undefined", default_str:  str = "undefined", validation_case_sensative: bool = False):
     has_validation = False
     has_default = False
+    safe_valid_list = []
     validation_case_sensative = bool(validation_case_sensative)
     if valid_list != "undefined":
         has_validation = True
     if not validation_case_sensative:
         counter = 0
         while counter < len(valid_list):
-            valid_list[counter] = valid_list[counter].upper()
+            safe_valid_list.append(valid_list[counter].upper())
             counter = counter + 1
     if default_str != "undefined":
         has_default = True
@@ -44,7 +42,7 @@ def input_string(question: str, retry_message: str, valid_list: str = "undefined
     if has_validation:
         while not valid_response:
             response = input(question)
-            if not validation_case_sensative and (response.upper() in valid_list):
+            if not validation_case_sensative and (response.upper() in safe_valid_list):
                 valid_response = True
                 string = response
             elif validation_case_sensative and (response in valid_list):
