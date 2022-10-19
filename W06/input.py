@@ -136,7 +136,7 @@ def input_float(question: str, retry_message: str, minimum_float: float = "undef
                 float_value = default_float
     return float_value
 
-def input_bool(question: str, retry_message: str, valid_true_list: str = "undefined", valid_false_list: str = "undefined", default_bool:  bool = "undefined"):
+def input_bool(question: str, retry_message: str, valid_true_list: str = "undefined", valid_false_list: str = "undefined", default_bool:  bool = "undefined", validation_case_sensative: bool = False):
     has_valid_true = False
     has_valid_false = False
     has_default = False
@@ -146,6 +146,7 @@ def input_bool(question: str, retry_message: str, valid_true_list: str = "undefi
     valid_false_is_list = False
     valid_false_is_boolean = False
     valid_false_is_string = False
+    validation_case_sensative = bool(validation_case_sensative)
     if valid_true_list != "undefined":
         has_valid_true = True
         if(type(valid_true_list) == type(["", ""])):
@@ -162,6 +163,21 @@ def input_bool(question: str, retry_message: str, valid_true_list: str = "undefi
             valid_false_is_boolean = True
         else:
             valid_false_is_string = True
+    if not validation_case_sensative:
+        if valid_true_is_list:
+            counter = 0
+            while counter < len(valid_true_list):
+                valid_true_list[counter] = valid_true_list[counter].upper()
+                counter = counter + 1
+        elif valid_true_is_string:
+            valid_true_list = valid_true_list.upper()
+        if valid_false_is_list:
+            counter = 0
+            while counter < len(valid_false_list):
+                valid_false_list[counter] = valid_false_list[counter].upper()
+                counter = counter + 1
+        elif valid_false_is_string:
+            valid_false_list = valid_false_list.upper()
     if default_bool != "undefined":
         has_default = True
         default_bool = bool(default_bool)
@@ -172,16 +188,28 @@ def input_bool(question: str, retry_message: str, valid_true_list: str = "undefi
         while not valid_response:
             try:
                 response = input(question)
-                if valid_true_is_list and (response.upper() in valid_true_list):
+                if valid_true_is_list and not validation_case_sensative and (response.upper() in valid_true_list):
                     valid_response = True
                     boolean = True
-                elif (response == valid_true_list):
+                elif valid_true_is_list and validation_case_sensative and (response in valid_true_list):
                     valid_response = True
                     boolean = True
-                elif valid_false_is_list and (response.upper() in valid_false_list):
+                elif not validation_case_sensative and (response.upper() == valid_true_list):
+                    valid_response = True
+                    boolean = True
+                elif validation_case_sensative and (response == valid_true_list):
+                    valid_response = True
+                    boolean = True
+                elif valid_false_is_list and not validation_case_sensative and (response.upper() in valid_false_list):
                     valid_response = True
                     boolean = False
-                elif (response == valid_false_list):
+                elif valid_false_is_list and validation_case_sensative and (response in valid_false_list):
+                    valid_response = True
+                    boolean = False
+                elif not validation_case_sensative and (response.upper() == valid_false_list):
+                    valid_response = True
+                    boolean = False
+                elif validation_case_sensative and (response == valid_false_list):
                     valid_response = True
                     boolean = False
                 elif valid_true_is_boolean and (bool(response.capitalize()) == valid_true_list):
@@ -204,10 +232,16 @@ def input_bool(question: str, retry_message: str, valid_true_list: str = "undefi
         while not valid_response:
             try:
                 response = input(question)
-                if valid_true_is_list and (response.upper() in valid_true_list):
+                if valid_true_is_list and not validation_case_sensative and (response.upper() in valid_true_list):
                     valid_response = True
                     boolean = True
-                elif (response == valid_true_list):
+                elif valid_true_is_list and validation_case_sensative and (response in valid_true_list):
+                    valid_response = True
+                    boolean = True
+                elif not validation_case_sensative and (response.upper() == valid_true_list):
+                    valid_response = True
+                    boolean = True
+                elif validation_case_sensative and (response == valid_true_list):
                     valid_response = True
                     boolean = True
                 elif valid_true_is_boolean and (bool(response.capitalize()) == valid_true_list):
@@ -227,10 +261,16 @@ def input_bool(question: str, retry_message: str, valid_true_list: str = "undefi
         while not valid_response:
             try:
                 response = input(question)
-                if valid_false_is_list and (response.upper() in valid_false_list):
+                if valid_false_is_list and not validation_case_sensative and (response.upper() in valid_false_list):
                     valid_response = True
                     boolean = False
-                elif (response == valid_false_list):
+                elif valid_false_is_list and validation_case_sensative and (response in valid_false_list):
+                    valid_response = True
+                    boolean = False
+                elif not validation_case_sensative and (response.upper() == valid_false_list):
+                    valid_response = True
+                    boolean = False
+                elif validation_case_sensative and (response == valid_false_list):
                     valid_response = True
                     boolean = False
                 elif valid_false_is_boolean and (bool(response.capitalize()) == valid_false_list):
