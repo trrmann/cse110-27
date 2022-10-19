@@ -22,6 +22,43 @@
         output:  pass the invalid response value if the value retrieved from the user is not valid.
 """
 
+from heapq import merge
+
+
+def input_string(question: str, retry_message: str, valid_list: str = "undefined", default_str:  str = "undefined", validation_case_sensative: bool = False):
+    has_validation = False
+    has_default = False
+    validation_case_sensative = bool(validation_case_sensative)
+    if valid_list != "undefined":
+        has_validation = True
+    if not validation_case_sensative:
+        counter = 0
+        while counter < len(valid_list):
+            valid_list[counter] = valid_list[counter].upper()
+            counter = counter + 1
+    if default_str != "undefined":
+        has_default = True
+        default_str = default_str
+    valid_response = not has_validation
+    string = ""
+    if has_validation:
+        while not valid_response:
+            response = input(question)
+            if not validation_case_sensative and (response.upper() in valid_list):
+                valid_response = True
+                string = response
+            elif validation_case_sensative and (response in valid_list):
+                valid_response = True
+                string = response
+            elif has_default:
+                valid_response = True
+                string = default_str
+            else:
+                print(retry_message)
+    else:
+        string = input(question)
+    return string
+
 def input_integer(question: str, retry_message: str, minimum_int: int = "undefined", maximum_int: int = "undefined", default_int:  int = "undefined"):
     has_min = False
     has_max = False
@@ -317,47 +354,3 @@ def input_bool(question: str, retry_message: str, valid_true_list: str = "undefi
             if has_default:
                 boolean = default_bool
     return boolean
-
-def input_string(question: str, retry_message: str, valid_list: str = "undefined", default_str:  str = "undefined", validation_case_sensative: bool = False):
-    has_validation = False
-    has_default = False
-    validation_case_sensative = bool(validation_case_sensative)
-    if valid_list != "undefined":
-        has_validation = True
-    if not validation_case_sensative:
-        counter = 0
-        while counter < len(valid_list):
-            valid_list[counter] = valid_list[counter].upper()
-            counter = counter + 1
-    if default_str != "undefined":
-        has_default = True
-        default_str = str(default_str)
-    valid_response = not has_validation
-    string = ""
-    if has_validation:
-        while not valid_response:
-            try:
-                response = input(question)
-                if not validation_case_sensative and (response.upper() in valid_list):
-                    valid_response = True
-                    string = response
-                elif validation_case_sensative and (response in valid_list):
-                    valid_response = True
-                    string = response
-                elif has_default:
-                    valid_response = True
-                    string = default_str
-                else:
-                    print(retry_message)
-            except ValueError:
-                if has_default:
-                    string = default_str
-                else:
-                    print(retry_message)
-    else:
-        try:
-            response = input(question)
-        except ValueError:
-            if has_default:
-                string = default_str
-    return string
