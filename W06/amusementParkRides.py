@@ -110,17 +110,17 @@ if has_second_rider:
     riders[second_rider_key] = request_rider_information("second")
 riders = validate_riders(rider_collection = riders)
 if len(riders) > 1:
-    if riders[first_rider_key][adult_key] or riders[second_rider_key][adult_key]:
+    if (riders[first_rider_key][adult_key] or riders[second_rider_key][adult_key]) and (riders[first_rider_key][can_ride_key] and riders[second_rider_key][can_ride_key]):
         print("Welcome to the ride.  Please be safe and have fun!")
     # added in version 1.1 req. 1
     elif riders[first_rider_key][tall_minor_pair_key] and riders[second_rider_key][tall_minor_pair_key]:
         print("Welcome to the ride.  Please be safe and have fun!")
     # added in version 1.1 req. 3
-    elif (riders[first_rider_key][minor_pair_sponsor_key] and riders[second_rider_key][minor_pair_sponsorable_key]) or (riders[second_rider_key][minor_pair_sponsor_key] and riders[first_rider_key][minor_pair_sponsorable_key]):
+    elif ((riders[first_rider_key][minor_pair_sponsor_key] and riders[second_rider_key][minor_pair_sponsorable_key]) or (riders[second_rider_key][minor_pair_sponsor_key] and riders[first_rider_key][minor_pair_sponsorable_key])) and (riders[first_rider_key][can_ride_key] and riders[second_rider_key][can_ride_key]):
         print("Welcome to the ride.  Please be safe and have fun!")
     elif riders[first_rider_key][can_ride_key] and riders[first_rider_key][can_ride_key]:
         print("Sorry you may not ride this ride together, you need one rider over 18.")
-    elif (not riders[first_rider_key][can_ride_key]) and (not riders[first_rider_key][can_ride_key]):
+    elif (not riders[first_rider_key][can_ride_key]) and (not riders[second_rider_key][can_ride_key]):
         print("Sorry neither rider may ride this ride at all.")
     elif (not riders[first_rider_key][can_ride_key]):
         print("Sorry the first rider may not ride this ride at all.")
