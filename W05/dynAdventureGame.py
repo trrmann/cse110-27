@@ -52,7 +52,7 @@
             new answer, only print the display_key result and exit the loop.  any valid resonse will reset the invalid response counter to 0.  the senarios
             will be stored in and retrieved from a dictionary variable that is setup prior to starting the exceution loop to initiate using the init_senario.
 
-    submission comment:  I believe this submission has earned a Made it my own.  I have met every requirement in the ruberic.  I have also incorporated the use of a dictionary list to hold senarios and a while loop to traverse the data in the dictionary.  I have ensured for the ruberic that the data points do not allow the same responses in any other senario and all senario paths are distict and do not cross or go backward.  due to this being a loop, i have also added an option to breaking out of the game after reaching any multiple of 3 invalid responses.
+    submission comment:  I believe this submission has earned a Made it my own.  I have met every requirement in the ruberic.  I have also incorporated the use of a dictionary list to hold senarios and a while loop to traverse the data in the dictionary.  I have ensured for the ruberic that the data points do not allow the same responses in any other senario and all senario paths are distict and do not cross or go backward.  due to this being a loop, i have also added an option to breaking out of the game after reaching any multiple of 3 invalid responses.  I have shown 2 co-workers this program they liked the capture of invalid responses and the use of modulus on the quick loop option.  I also showed my team this program and displayed how it worked.
 
 """
 import os
