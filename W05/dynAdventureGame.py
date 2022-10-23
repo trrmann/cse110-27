@@ -216,112 +216,153 @@ What do you do? ",
         results_key : exit_result
     },
     "cove" : {
-        display_key : "You reach the Cove.  choices:  H1, H2, H3?  ",
+        display_key : "You reach the Cove.\
+  You may go (F)ISHING,\
+ (W)ADE in the water,\
+ or (S)KIP rocks across the cove.\
+What do you do? ",
         results_key : {
-            "H1" : "h1",
-            "H2" : "h2",
-            "H3" : "h3"
+            "FISHING" : "fishing",
+            "WADE" : "wade",
+            "SKIP" : "skip_rocks",
+            "F" : "cove_fishing",
+            "W" : "wade",
+            "S" : "skip_rocks"
         }
     },
-    "h1" : {
-        display_key : "H1 selected!\n",
+    "fishing" : {
+        display_key : "You fish for hours and catch nothing but bait fish and now you can go no further!\n",
         results_key : exit_result
     },
-    "h2" : {
-        display_key : "H2 selected!\n",
+    "wade" : {
+        display_key : "You start to wade into the water, find it is too cold and now you can go no further!\n",
         results_key : exit_result
     },
-    "h3" : {
-        display_key : "H3 selected!\n",
+    "skip_rocks" : {
+        display_key : "Tou skip rocks out across the cove for the rest of the night, and can go no further!\n",
         results_key : exit_result
     },
     "breakwater" : {
-        display_key : "You reach the Breakwater.  choices:  I1, I2, I3?  ",
+        display_key : "You reach the Breakwater.\
+  You may go (C)LIMB the breakwater,\
+ (P)ICK flowers,\
+ or (D)IG into the breakwater.\
+What do you do? ",
         results_key : {
-            "I1" : "i1",
-            "I2" : "i2",
-            "I3" : "i3"
+            "CLIMB" : "climb",
+            "PICK" : "pick",
+            "DIG" : "dig",
+            "C" : "climb",
+            "P" : "pick",
+            "D" : "dig"
         }
     },
-    "i1" : {
-        display_key : "I1 selected!\n",
+    "climb" : {
+        display_key : "You climb the breakwater and walk the coast all night, and can go no further!\n",
         results_key : exit_result
     },
-    "i2" : {
-        display_key : "I2 selected!\n",
+    "pick" : {
+        display_key : "You send the rest of the day picking flowers, and can go no further!\n",
         results_key : exit_result
     },
-    "i3" : {
-        display_key : "I3 selected!\n",
+    "dig" : {
+        display_key : "You decide digging into the breakwater is not a good idea, so you can go no further!\n",
         results_key : exit_result
     },
     "river" : {
         display_key : "You reached the river.\
-  choices:  J, K, L?  ",
+  You may walk up to the (F)ORD,\
+ stay on the (B)ANK,\
+ or go over to the F(E)RRY.\
+What do you do? ",
         results_key : {
-            "J" : "ford",
-            "K" : "bank",
-            "L" : "ferry"
+            "FORD" : "ford",
+            "BANK" : "bank",
+            "FERRY" : "ferry",
+            "F" : "ford",
+            "B" : "bank",
+            "E" : "ferry"
         }
     },
     "ford" : {
-        display_key : "choices:  J1, J2, J3?  ",
+        display_key : "You reached the ford.\
+  You may (C)ROSS the ford,\
+ (L)OOK into the water,\
+ or (G)RAB some of the crayfish that are pooling in front of you.\
+What do you do? ",
         results_key : {
-            "J1" : "j1",
-            "J2" : "j2",
-            "J3" : "j3"
+            "CROSS" : "cross",
+            "LOOK" : "look",
+            "GRAB" : "grab",
+            "C" : "cross",
+            "L" : "look",
+            "G" : "grab"
         }
     },
-    "j1" : {
-        display_key : "J1 selected!\n",
+    "cross" : {
+        display_key : "As you begin to cross the ford, you find the water is too fast.  You are stuck and can go no further!\n",
         results_key : exit_result
     },
-    "j2" : {
-        display_key : "J2 selected!\n",
+    "look" : {
+        display_key : "As you look ino the water you get lost in your thoughts and find it is too late in the day to go any further!\n",
         results_key : exit_result
     },
-    "j3" : {
-        display_key : "J3 selected!\n",
+    "grab" : {
+        display_key : "You grab a handful of crayfish and they pinch your hand making you drop them all.  As you wonder about what happened you can go no further!\n",
         results_key : exit_result
     },
     "bank" : {
-        display_key : "choices:  K1, K2, K3?  ",
+        display_key : "You reached the bank.\
+  You may (M)AKE some mud pies,\
+ (C)OLLECT some pretty stones and shells,\
+ or (S)EARCH for burried treasure.\
+What do you do? ",
         results_key : {
-            "K1" : "k1",
-            "K2" : "k2",
-            "K3" : "k3"
+            "MAKE" : "make",
+            "COLLECT" : "collect",
+            "SEARCH" : "search",
+            "M" : "make",
+            "C" : "collect",
+            "S" : "search"
         }
     },
-    "k1" : {
-        display_key : "K1 selected!\n",
+    "make" : {
+        display_key : "You spend the day making mud pies, having a lot of un, but you can go no further!\n",
         results_key : exit_result
     },
-    "k2" : {
-        display_key : "K2 selected!\n",
+    "collect" : {
+        display_key : "You collect many stones and shells to remind you of your trip, but you can go no further!\n",
         results_key : exit_result
     },
-    "k3" : {
-        display_key : "K3 selected!\n",
+    "search" : {
+        display_key : "You search all afternoon for buried treasure, finding nothing, and you can go no further!\n",
         results_key : exit_result
     },
     "ferry" : {
-        display_key : "choices:  L1, L2, L3?  ",
+        display_key : "You reached the ferry.\
+  You may (R)IDE the ferry across,\
+ (W)ATCH the ferryman cross the deep water,\
+ or (T)ALK to the ferryman about the weather.\
+What do you do? ",
         results_key : {
-            "L1" : "l1",
-            "L2" : "l2",
-            "L3" : "l3"
+            "RIDE" : "ride",
+            "WATCH" : "watch",
+            "TALK" : "talk",
+            "R" : "ride",
+            "W" : "watch",
+            "T" : "talk"
         }
     },
-    "l1" : {
-        display_key : "L1 selected!\n",
+    "ride" : {
+        display_key : "As you go to ride the ferry, you find you do not have enough to pay the toll, so you can go no further!\n",
         results_key : exit_result
     },
-    "l2" : {
-        display_key : "L2 selected!\n",
+    "watch" : {
+        display_key : "You spend the afternoon watching the ferryman take teh ferry back and forth, then you find it is too late and can go no further!\n",
         results_key : exit_result
     },
-    "l3" : {
-        display_key : "L3 selected!\n",
+    "talk" : {
+        display_key : "You call out to talk with the ferryman, but he does not hear you and goes across the river.  You find yourself alone and can go no further!\n",
         results_key : exit_result
     }
 }
