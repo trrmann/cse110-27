@@ -1,3 +1,8 @@
+#pip install requests
+#pip install certifi
+from random import *
+import requests
+import certifi
 import os
 
 exit_key = "exit"
@@ -10,6 +15,100 @@ invalid_count_key = "invalid_count"
 lost_key = "lost"
 points_key = "points"
 guesses_key = "guesses"
+
+def test_connection_to_github():
+    try:
+        print('Checking connection to Github...')
+        test = requests.get('https://api.github.com')
+        print('Connection to Github OK.')
+        return True
+    except requests.exceptions.SSLError as err:
+        print('SSL Error. Adding custom certs to Certifi store...')
+        cafile = certifi.where()
+        with open('certicate.pem', 'rb') as infile:
+            customca = infile.read()
+        with open(cafile, 'ab') as outfile:
+            outfile.write(customca)
+        print('That might have worked.')
+        return False
+
+def get_bible_strings():
+    if test_connection_to_github():
+        kjv_scriptures_file = "https://raw.githubusercontent.com/beandog/lds-scriptures/master/text/kjv-scriptures.txt"
+        lds_scriptures_file = "https://raw.githubusercontent.com/beandog/lds-scriptures/master/text/lds-scriptures.txt"
+        kjv_scriptures = requests.get(url=kjv_scriptures_file, params={"owner":"beandog", "repo":"lds-scriptures", "path":"text/kjv-scriptures.txt", "ref":"master", "accept":"application/text"}, stream = True)
+        lds_scriptures = requests.get(url=lds_scriptures_file, params={"owner":"beandog", "repo":"lds-scriptures", "path":"text/lds-scriptures.txt", "ref":"master", "accept":"application/text"}, stream = True)
+        scriptures = f"{kjv_scriptures.text}\n{lds_scriptures.text}"
+        lines = scriptures.split("\n")
+        words = {}
+        min_len = 6
+        #line_count=1
+        for line in lines:
+            line_words = line.split(" ")
+            for word in line_words:
+                word = purify_alpha(word, min_len)
+                if only_letters(word) and (len(word) >= min_len) and not(word in words.keys()):
+                    words[word] = True
+                elif has_letters(word) and (len(word) >= min_len) and not(word in words.keys()):
+                    pass
+        #            print(word)
+        #    print(f"{line_count}  {line}")
+        #    line_count = line_count + 1
+        #print(words.keys())
+        #print(len(words.keys()))
+        list = [*words.keys()]
+    else:
+        list = ["testing", "developing", "implementing", "patching", "upgrading"]
+    return list
+
+def get_random_strings_list(count: int = 1, full_list = get_bible_strings()):
+    r = Random()
+    r.seed()
+    list = []
+    for counter in range(5):
+        list.append(r.choice(full_list))
+    return list
+
+def isAlpha(string):
+    s = string
+    return (len(s) == 1) and (s.lower() >= "a" and s.lower() <= "z")
+
+def only_letters(string):
+    if string == None:
+        return string
+    else:
+        return all(isAlpha(letter) for letter in string)
+
+def has_letters(string):
+    if string == None:
+        return False
+    else:
+        count=0
+        for letter in string:
+            if isAlpha(letter): count = count + 1
+        return count > 0
+
+def purify_alpha(string, min_len = 2):
+    if len(string) < min_len:
+        return string
+    else:
+#        print(string)
+#        print(f"{string[0]} {string[len(string)-1]}")
+        if isAlpha(string[0]) and isAlpha(string[len(string)-1]):
+#            print(string)
+            return string
+        elif isAlpha(string[0]):
+            print(string)
+            print(f"> {string[0]} {string[len(string)-1]}")
+            print(string[0:len(string)-1])
+            print(purify_alpha(string[0:len(string)-1], min_len))
+            return purify_alpha(string[0:len(string)-1], min_len)
+        elif isAlpha(string[len(string)-1]):
+            print(string)
+            print(f"< {string[0]} {string[len(string)-1]}")
+            print(string[1:len(string)-1])
+            print(purify_alpha(string[1:len(string)-1], min_len))
+            return purify_alpha(string[1:len(string)-1], min_len)
 
 def invalid_number_of_players(number_of_players: int, min_number_of_players: int = 1, max_number_of_players: int = 2):
     return (int(number_of_players) < int(min_number_of_players)) or (int(number_of_players) > int(max_number_of_players))
@@ -50,8 +149,9 @@ def initialize_data(number_of_players: int = 1):
     else:
         data[exit_key] = False
         data[number_of_players_key] = int(number_of_players)
-        data[words_key] = ["abcde", "vwxyz", "lmnop"]
-        data[word_key] = "abcde"
+        data[words_key] = get_random_strings_list(5)
+        data[word_key] = Random().seed().choice(data[words_key])
+        data[words_key].remove(data[word_key])
         data[question_count_key] = 0
         for player in range(data[number_of_players_key]):
             data[player + 1] = {}
