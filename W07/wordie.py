@@ -7,14 +7,34 @@ import os
 
 exit_key = "exit"
 number_of_players_key = "number_of_players"
+full_words_key = "full_words_key"
 words_key = "words"
 word_key = "word"
+puzzle_key = "puzzle"
 question_count_key = "question_count"
 fail_count_key = "fail_count"
 invalid_count_key = "invalid_count"
 lost_key = "lost"
 points_key = "points"
 guesses_key = "guesses"
+offline_list = ["testing", "developing", "implementing", "patching", "upgrading"]
+
+def isAlpha(string):
+    s = string
+    return (len(s) == 1) and (s.lower() >= "a" and s.lower() <= "z")
+
+def purify_alpha(string, min_len = 2):
+    if len(string) < min_len:
+        return string
+    else:
+        if isAlpha(string[0]) and isAlpha(string[len(string)-1]):
+            return string
+        elif isAlpha(string[0]):
+            return purify_alpha(string[0:len(string)-1], min_len)
+        elif isAlpha(string[len(string)-1]):
+            return purify_alpha(string[1:len(string)], min_len)
+        else:
+            return purify_alpha(string[0:len(string)-1], min_len)
 
 def test_connection_to_github():
     try:
@@ -32,53 +52,6 @@ def test_connection_to_github():
         print('That might have worked.')
         return False
 
-def get_bible_strings():
-    if test_connection_to_github():
-        kjv_scriptures_file = "https://raw.githubusercontent.com/beandog/lds-scriptures/master/text/kjv-scriptures.txt"
-        lds_scriptures_file = "https://raw.githubusercontent.com/beandog/lds-scriptures/master/text/lds-scriptures.txt"
-        kjv_scriptures = requests.get(url=kjv_scriptures_file, params={"owner":"beandog", "repo":"lds-scriptures", "path":"text/kjv-scriptures.txt", "ref":"master", "accept":"application/text"}, stream = True)
-        lds_scriptures = requests.get(url=lds_scriptures_file, params={"owner":"beandog", "repo":"lds-scriptures", "path":"text/lds-scriptures.txt", "ref":"master", "accept":"application/text"}, stream = True)
-        scriptures = f"{kjv_scriptures.text}\n{lds_scriptures.text}"
-        lines = scriptures.split("\n")
-        words = {}
-        min_len = 6
-        #line_count=1
-        for line in lines:
-            line_words = line.split(" ")
-            for word in line_words:
-                word = purify_alpha(word, min_len)
-                if only_letters(word) and (len(word) >= min_len) and not(word in words.keys()):
-                    words[word] = True
-                elif has_letters(word) and (len(word) >= min_len) and not(word in words.keys()):
-                    pass
-        #            print(word)
-        #    print(f"{line_count}  {line}")
-        #    line_count = line_count + 1
-        #print(words.keys())
-        #print(len(words.keys()))
-        list = [*words.keys()]
-    else:
-        list = ["testing", "developing", "implementing", "patching", "upgrading"]
-    return list
-
-def get_random_strings_list(count: int = 1, full_list = get_bible_strings()):
-    r = Random()
-    r.seed()
-    list = []
-    for counter in range(5):
-        list.append(r.choice(full_list))
-    return list
-
-def isAlpha(string):
-    s = string
-    return (len(s) == 1) and (s.lower() >= "a" and s.lower() <= "z")
-
-def only_letters(string):
-    if string == None:
-        return string
-    else:
-        return all(isAlpha(letter) for letter in string)
-
 def has_letters(string):
     if string == None:
         return False
@@ -88,27 +61,106 @@ def has_letters(string):
             if isAlpha(letter): count = count + 1
         return count > 0
 
-def purify_alpha(string, min_len = 2):
-    if len(string) < min_len:
+def only_letters(string):
+    if string == None:
         return string
     else:
-#        print(string)
-#        print(f"{string[0]} {string[len(string)-1]}")
-        if isAlpha(string[0]) and isAlpha(string[len(string)-1]):
-#            print(string)
-            return string
-        elif isAlpha(string[0]):
-            print(string)
-            print(f"> {string[0]} {string[len(string)-1]}")
-            print(string[0:len(string)-1])
-            print(purify_alpha(string[0:len(string)-1], min_len))
-            return purify_alpha(string[0:len(string)-1], min_len)
-        elif isAlpha(string[len(string)-1]):
-            print(string)
-            print(f"< {string[0]} {string[len(string)-1]}")
-            print(string[1:len(string)-1])
-            print(purify_alpha(string[1:len(string)-1], min_len))
-            return purify_alpha(string[1:len(string)-1], min_len)
+        return all(isAlpha(letter) for letter in string)
+
+def get_bible_strings():
+    if test_connection_to_github():
+        kjv_scriptures_file = "https://raw.githubusercontent.com/beandog/lds-scriptures/master/text/kjv-scriptures.txt"
+        lds_scriptures_file = "https://raw.githubusercontent.com/beandog/lds-scriptures/master/text/lds-scriptures.txt"
+        kjv_scriptures = requests.get(url=kjv_scriptures_file, params={"owner":"beandog", "repo":"lds-scriptures", "path":"text/kjv-scriptures.txt", "ref":"master", "accept":"application/text"}, stream = True)
+        lds_scriptures = requests.get(url=lds_scriptures_file, params={"owner":"beandog", "repo":"lds-scriptures", "path":"text/lds-scriptures.txt", "ref":"master", "accept":"application/text"}, stream = True)
+        scriptures = f"{kjv_scriptures.text}\n{lds_scriptures.text}"
+        lines = scriptures.split("\n")
+        non_case_words = {}
+        words = {}
+        letters = {}
+        min_len = 3
+        #line_count=1
+        word_count = 0
+        letter_count = 0
+        for line in lines:
+            line_words = line.split(" ")
+            for word in line_words:
+                word = purify_alpha(word, min_len)
+                if only_letters(word) and (len(word) >= min_len):
+                    if not(word in words.keys()): 
+                        words[word] = 0
+                        non_case_words[word.lower()] = 0
+                    words[word] = words[word] + 1
+                    non_case_words[word.lower()] = non_case_words[word.lower()] + 1
+                    word_count = word_count + 1
+                    for letter in word.lower():
+                        if not(letter in letters.keys()):
+                            letters[letter] = 0
+                        letters[letter] = letters[letter] + 1
+                        letter_count = letter_count + 1
+                elif has_letters(word) and (len(word) >= (min_len + 2)) and ("'" in word):
+                    if only_letters(word[0:len(word)-2]) and (len(word[0:len(word)-2]) >= min_len):
+                        if not(word in words.keys()): 
+                            words[word] = 0
+                            non_case_words[word.lower()] = 0
+                        words[word] = words[word] + 1
+                        non_case_words[word.lower()] = non_case_words[word.lower()] + 1
+                        word_count = word_count + 1
+                        for letter in word.lower():
+                            if letter != "'":
+                                if not(letter in letters.keys()):
+                                    letters[letter] = 0
+                                letters[letter] = letters[letter] + 1
+                                letter_count = letter_count + 1
+                        word = word[0:len(word)-2]
+                        if not(word in words.keys()): 
+                            words[word] = 0
+                            non_case_words[word.lower()] = 0
+                        words[word] = words[word] + 1
+                        non_case_words[word.lower()] = non_case_words[word.lower()] + 1
+                    else:
+                        print(f"X'X {len(words.keys())} {word}")
+                elif has_letters(word) and ("--" in word) and (len(word) >= ((min_len * 2) + 2)):
+                    pair = word.split("--")
+                    for pair_word in pair:
+                        if only_letters(pair_word) and (len(pair_word) >= min_len):
+                            if not(pair_word in words.keys()): 
+                                words[pair_word] = 0
+                                non_case_words[pair_word.lower()] = 0
+                            words[pair_word] = words[pair_word] + 1
+                            non_case_words[pair_word.lower()] = non_case_words[pair_word.lower()] + 1
+                            word_count = word_count + 1
+                            for letter in pair_word.lower():
+                                if not(letter in letters.keys()):
+                                    letters[letter] = 0
+                                letters[letter] = letters[letter] + 1
+                                letter_count = letter_count + 1
+                        else:
+                            #print(f"X--X {len(words.keys())} {word} {pair} {pair_word}")
+                            pass
+                elif has_letters(word) and (len(word) >= min_len) and not(word in words.keys()):
+                    print(f"{len(words.keys())} {word}")
+        #            print(word)
+        #    print(f"{line_count}  {line}")
+        #    line_count = line_count + 1
+        #print(words.keys())
+        print(len(words.keys()))
+        list = [*words.keys()]
+        raise Exception()
+    else:
+        list = offline_list
+    return list
+
+def get_random_strings_list(count: int = 1, min_len: int = 5, full_list = offline_list):
+    r = Random()
+    r.seed()
+    list = []
+    for counter in range(5):
+        word = ""
+        while len(word) < int(min_len):
+            word = r.choice(full_list)
+        list.append(word)
+    return list
 
 def invalid_number_of_players(number_of_players: int, min_number_of_players: int = 1, max_number_of_players: int = 2):
     return (int(number_of_players) < int(min_number_of_players)) or (int(number_of_players) > int(max_number_of_players))
@@ -143,15 +195,23 @@ def request_valid_number_of_players(min_number_of_players: int = 1, max_number_o
     return int(number_of_players)
 
 def initialize_data(number_of_players: int = 1):
+    r = Random()
+    r.seed()
     data = {}
     if(int(number_of_players) == int(min_number_of_players) - 2):
         data[exit_key] = True
     else:
         data[exit_key] = False
         data[number_of_players_key] = int(number_of_players)
-        data[words_key] = get_random_strings_list(5)
-        data[word_key] = Random().seed().choice(data[words_key])
+        data[full_words_key] = get_bible_strings()
+        print(len(data[full_words_key]))
+        input("")
+        data[words_key] = get_random_strings_list(5, 5, data[full_words_key])
+        data[word_key] = r.choice(data[words_key])
         data[words_key].remove(data[word_key])
+        data[puzzle_key] = ""
+        size = len(data[word_key])
+        for loop in range(size): data[puzzle_key] = f"{data[puzzle_key]}_ "
         data[question_count_key] = 0
         for player in range(data[number_of_players_key]):
             data[player + 1] = {}
@@ -199,6 +259,8 @@ def has_players(data, single:bool = True):
         return bool(number_of_players(data) > 1)
 
 def invalid_guess(data, guess):
+    if len(data[full_words_key]) > 10000:
+        return bool(len(guess) < 2) or not(guess in data[full_words_key])
     return bool(len(guess) < 1)
 
 def valid_guess(data, guess):
@@ -301,23 +363,42 @@ def has_hint(data, guess):
     return has_hint
 
 def show_hint(data, guess):
-    print("Show hint!")
+    hint = ""
+    for index in range(len(guess)):
+        letter = guess[index]
+        if letter in data[word_key]:
+            if letter == data[word_key][index]:
+                hint = f"{hint} {letter.upper()}"
+            else: hint = f"{hint} {letter.lower()}"
+        else: hint = f"{hint} _"
+    print(f"hint:  {hint}")
 
 def show_puzzle(data):
-    print("Show puzzle!")
+    print(data[puzzle_key])
 
 def award_points(data):
     print("award points!")
 
 def next_word(data):
+    r = Random()
+    r.seed()
     print("next word")
+    if len(data[words_key]) < 1: data[words_key] = get_random_strings_list(5, 5, data[full_words_key])
+    data[word_key] = r.choice(data[words_key])
+    data[words_key].remove(data[word_key])
+    data[puzzle_key] = ""
+    size = len(data[word_key])
+    for loop in range(size): data[puzzle_key] = f"{data[puzzle_key]}_ "
     for player in range(data[number_of_players_key]):
-        data[player + 1][fail_count_key] = 0
-        data[player + 1][invalid_count_key] = 0
-        data[player + 1][guesses_key] = []
+        if not data[player + 1][lost_key]:
+            data[player + 1][fail_count_key] = 0
+            data[player + 1][invalid_count_key] = 0
+            data[player + 1][guesses_key] = []
 
 def eval_win(data):
     print("check for winner!")
+
+
 
 min_number_of_players = 1
 max_number_of_players = 6
