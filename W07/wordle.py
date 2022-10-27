@@ -1,4 +1,6 @@
 import os
+import ast
+import datetime
 from random import *
 from pathlib import Path
 
@@ -112,15 +114,6 @@ def play(play_data, exit = False):
     return exit
 
 def main():
-    file_name = "data.dat"
-    if file_exists(file_name):
-        file = open(file_name, "xt")
-        file.close()
-    file = open(file_name, "rt")
-    file_data = file.read()
-    file.close()
-    print(file_data)
-    raise Exception()
     play_data = {}
     play_data[random_key] = Random()
     play_data[random_key].seed()

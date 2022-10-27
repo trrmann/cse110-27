@@ -49,6 +49,10 @@ def test_connection_to_github():
         test = requests.get('https://api.github.com')
         print('Connection to Github OK.')
         return True
+    except requests.exceptions.ConnectionError as err:
+        #('Connection aborted.', ConnectionResetError(10054, 'An existing connection was forcibly closed by the remote host', None, 10054, None))
+        print("connection closed!")
+        raise err
     except requests.exceptions.SSLError as err:
         print('SSL Error. Adding custom certs to Certifi store...')
         cafile = certifi.where()
