@@ -1,5 +1,6 @@
 import os
 from random import *
+from pathlib import Path
 
 random_key = "random"
 word_list_key = "wordList"
@@ -8,6 +9,13 @@ count_key = "count"
 guess_key = "guess"
 hint_key = "hint"
 number_of_players_key = "numberOfPlayers"
+
+def file_exists(file_name):
+    return os.path.exists(file_name)
+
+def is_file(file_name):
+    if file_exists(file_name): return Path(file_name).is_file
+    else: return False
 
 def clear_screen():
     print("\n" * 6)
@@ -104,6 +112,15 @@ def play(play_data, exit = False):
     return exit
 
 def main():
+    file_name = "data.dat"
+    if file_exists(file_name):
+        file = open(file_name, "xt")
+        file.close()
+    file = open(file_name, "rt")
+    file_data = file.read()
+    file.close()
+    print(file_data)
+    raise Exception()
     play_data = {}
     play_data[random_key] = Random()
     play_data[random_key].seed()
