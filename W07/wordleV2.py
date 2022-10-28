@@ -98,6 +98,172 @@ def turn(play_data):
     elif is_guess_incorrect(play_data): play_data = process_incorrect_guess(play_data)
     return play_data
 
+def request_valid_bool(question: str, msg_invalid: str = None, true_list: list = None, false_list: list = None,
+        default: bool = None, max_retries: int = None, keyboard_interupt_handler_function = None):
+    if msg_invalid == None: has_msg_invalid = False
+    else: has_msg_invalid = True
+    if true_list == None: has_true_list = False
+    else: has_true_list = True
+    if false_list == None: has_false_list = False
+    else: has_false_list = True
+    if default == None: has_default = False
+    else: has_default = True
+    if max_retries == None: has_max_retries = False
+    else: has_max_retries = True
+    valid_bool = None
+    counter = 1
+    while valid_bool == None:
+        try:
+            valid_bool = input(question)
+            # fix this
+            if (has_true_list and not (valid_bool in list(true_list)))\
+                or (has_false_list and not (valid_bool in list(false_list))):
+                if has_msg_invalid:  print(msg_invalid)
+                valid_bool = None
+            else:
+                valid_bool = valid_bool in list(true_list)
+        except ValueError as err:
+            if has_true_list or has_false_list:
+                if has_max_retries and counter >= int(max_retries):
+                    if has_default: valid_bool = bool(default)
+                    else:
+                        if has_msg_invalid:  print(msg_invalid)
+                        print("Retries exceeded and no default defined!")
+                        raise err
+                elif has_max_retries:
+                    pass                    
+                elif has_default:
+                    valid_bool = bool(default)
+            elif has_max_retries and counter >= int(max_retries):
+                if has_default: valid_bool = bool(default)
+                else:
+                    if has_msg_invalid:  print(msg_invalid)
+                    print("Retries exceeded and no default defined!")
+                    raise err
+            elif has_default:
+                valid_bool = bool(default)
+            else:
+                if has_msg_invalid:  print(msg_invalid)
+        except KeyboardInterrupt as err:
+            if keyboard_interupt_handler_function != None:
+                return keyboard_interupt_handler_function
+            else:
+                raise err
+        finally:
+            counter += 1
+    return valid_bool
+
+def request_valid_int(question: str, msg_invalid: str = None, min: int = None, max: int = None,
+        default: int = None, max_retries: int = None, min_is_a_limit: bool = False, max_is_a_limit: bool = False,
+        keyboard_interupt_handler_function = request_valid_bool("you pressed ctr-c.  quit(y/n)?", true_list = ["y", "yes", ""], false_list = ["n", "no"],
+        default = True, max_retries = 3)):
+    if msg_invalid == None: has_msg_invalid = False
+    else: has_msg_invalid = True
+    if min == None: has_min = False
+    else: has_min = True
+    if max == None: has_max = False
+    else: has_max = True
+    if default == None: has_default = False
+    else: has_default = True
+    if max_retries == None: has_max_retries = False
+    else: has_max_retries = True
+    valid_int = None
+    counter = 1
+    while valid_int == None:
+        try:
+            valid_int = int(input(question))
+            if (has_min and (valid_int < int(min)) and not min_is_a_limit)\
+                or (has_min and (valid_int <= int(min)) and min_is_a_limit)\
+                or (has_max and (valid_int >= int(max)) and max_is_a_limit)\
+                or (has_max and (valid_int > int(max)) and not max_is_a_limit):
+                if has_msg_invalid:  print(msg_invalid)
+                valid_int = None
+        except ValueError as err:
+            if has_min or has_max:
+                if has_max_retries and counter >= int(max_retries):
+                    if has_default: valid_int = int(default)
+                    else:
+                        if has_msg_invalid:  print(msg_invalid)
+                        print("Retries exceeded and no default defined!")
+                        raise err
+                elif has_max_retries:
+                    pass                    
+                elif has_default:
+                    valid_int = int(default)
+            elif has_max_retries and counter >= int(max_retries):
+                if has_default: valid_int = int(default)
+                else:
+                    if has_msg_invalid:  print(msg_invalid)
+                    print("Retries exceeded and no default defined!")
+                    raise err
+            elif has_default:
+                valid_int = int(default)
+            else:
+                if has_msg_invalid:  print(msg_invalid)
+        except KeyboardInterrupt as err:
+            if keyboard_interupt_handler_function != None:
+                return keyboard_interupt_handler_function
+            else:
+                raise err
+        finally:
+            counter += 1
+    return valid_int
+
+def request_valid_float(question: str, msg_invalid: str = None, min: float = None, max: float = None,
+        default: float = None, max_retries: int = None, min_is_a_limit: bool = False, max_is_a_limit: bool = False,
+        keyboard_interupt_handler_function = None):
+    if msg_invalid == None: has_msg_invalid = False
+    else: has_msg_invalid = True
+    if min == None: has_min = False
+    else: has_min = True
+    if max == None: has_max = False
+    else: has_max = True
+    if default == None: has_default = False
+    else: has_default = True
+    if max_retries == None: has_max_retries = False
+    else: has_max_retries = True
+    valid_float = None
+    counter = 1
+    while valid_float == None:
+        try:
+            valid_float = float(input(question))
+            if (has_min and (valid_float < float(min)) and not min_is_a_limit)\
+                or (has_min and (valid_float <= float(min)) and min_is_a_limit)\
+                or (has_max and (valid_float >= float(max)) and max_is_a_limit)\
+                or (has_max and (valid_float > float(max)) and not max_is_a_limit):
+                if has_msg_invalid:  print(msg_invalid)
+                valid_float = None
+        except ValueError as err:
+            if has_min or has_max:
+                if has_max_retries and counter >= int(max_retries):
+                    if has_default: valid_float = float(default)
+                    else:
+                        if has_msg_invalid:  print(msg_invalid)
+                        print("Retries exceeded and no default defined!")
+                        raise err
+                elif has_max_retries:
+                    pass                    
+                elif has_default:
+                    valid_float = float(default)
+            elif has_max_retries and counter >= int(max_retries):
+                if has_default: valid_float = float(default)
+                else:
+                    if has_msg_invalid:  print(msg_invalid)
+                    print("Retries exceeded and no default defined!")
+                    raise err
+            elif has_default:
+                valid_float = float(default)
+            else:
+                if has_msg_invalid:  print(msg_invalid)
+        except KeyboardInterrupt as err:
+            if keyboard_interupt_handler_function != None:
+                return keyboard_interupt_handler_function
+            else:
+                raise err
+        finally:
+            counter += 1
+    return valid_float
+
 def play(play_data, exit = False):
     clear_screen()
     play_data[secret_word_key] = play_data[random_key].choice(play_data[word_list_key])

@@ -1,9 +1,8 @@
 import os
-import ast
-import datetime
 from random import *
-from pathlib import Path
 
+exit_key = "exit"
+lost_key = "lost"
 random_key = "random"
 word_list_key = "wordList"
 secret_word_key = "secretWord"
@@ -11,13 +10,54 @@ count_key = "count"
 guess_key = "guess"
 hint_key = "hint"
 number_of_players_key = "numberOfPlayers"
+max_guesses_key = "max_guesses"
 
-def file_exists(file_name):
-    return os.path.exists(file_name)
+def request_guess(play_data, hint):
+    try:
+        if remaining_tries(play_data) == 0: return input(f"Your guess is (last chance)? ").lower()
+        else: return input(f"Your guess is ({remaining_tries(play_data) + 1} tries remaining)? ").lower()
+    except KeyboardInterrupt:
+        print()
+        return hint
 
-def is_file(file_name):
-    if file_exists(file_name): return Path(file_name).is_file
-    else: return False
+def request_number_of_players():
+    players = -1
+    max_tries = 3
+    tries = 0
+    while (players < 1) and (tries < max_tries):
+        try:
+            players = int(input("How many players? "))
+        except ValueError:
+            players = 0
+        except KeyboardInterrupt:
+            print()
+            return 0
+        if players < 1:
+            print("Please provide a number of players greater than 1!")
+        tries += 1
+    if (players < 1):
+        players = 1
+    return players
+
+def wait_for_enter(exit):
+    try: input(f"Press Enter to continue.")
+    except KeyboardInterrupt: exit = True
+    return exit
+
+def play_again(exit: bool = False):
+    if not exit:
+        try:
+            again = input("Do you wish to play again [(Y)es/(N)o]? ")
+        except KeyboardInterrupt:
+            print()
+            again = "no"
+        if again.lower() in ["n", "no"]:
+            exit = True
+        elif again.lower() in ["y", "yes", ""]:
+            exit = False
+        else:
+            exit = False
+    return exit
 
 def clear_screen():
     print("\n" * 6)
@@ -44,9 +84,16 @@ def player_number(play_data):
 def turn_number(play_data):
     return int(play_data[count_key] / play_data[number_of_players_key]) + 1
 
+def last_hint(play_data):
+    play_data[play_data[count_key]][hint_key] = "last hint"
+    return play_data
+
 def process_incorrect_guess_size(play_data):
     print("Sorry, the guess must have the same number of letters as the secret word.\n")
-    play_data[play_data[count_key]][hint_key] = "_ " * len(play_data[secret_word_key])
+    play_data[play_data[count_key]][hint_key] = ""
+    if remaining_tries(play_data)==1:  play_data = last_hint(play_data)
+    else: play_data[play_data[count_key]][hint_key] = "_ " * len(play_data[secret_word_key])
+    if is_multi_player(play_data): wait_for_enter(exit)
     return play_data
 
 def process_match(play_data, index):
@@ -69,16 +116,20 @@ def process_hint_index(play_data, index):
 
 def process_incorrect_guess(play_data):
     play_data[play_data[count_key]][hint_key] = ""
-    for index in range(len(play_data[play_data[count_key]][guess_key])): play_data = process_hint_index(play_data, index)
+    if remaining_tries(play_data)==1: play_data = last_hint(play_data)
+    else:
+        for index in range(len(play_data[play_data[count_key]][guess_key])): play_data = process_hint_index(play_data, index)
     return play_data
 
 def process_multiplayer_win(play_data):
     print(f"Congratulations Player {player_number(play_data)}, you guessed it!")
-    print(f"It took you {turn_number(play_data)} guesses.")
+    if turn_number(play_data) > 1: print(f"It took you {turn_number(play_data)} guesses.")
+    else: print(f"It took you {turn_number(play_data)} guess.")
 
 def process_single_win(play_data):
     print("Congratulations! You guessed it!")
-    print(f"It took you {turn_number(play_data)} guesses.")
+    if turn_number(play_data) > 1: print(f"It took you {turn_number(play_data)} guesses.")
+    else: print(f"It took you {turn_number(play_data)} guess.")
 
 def process_multiplayer_turn_display(play_data):
     print(f"Player {player_number(play_data)} turn {turn_number(play_data)}")
@@ -86,32 +137,52 @@ def process_multiplayer_turn_display(play_data):
 def process_single_turn_display(play_data):
     print(f"turn {turn_number(play_data)}")
 
+def current_player_last_guess_index(play_data):
+    if play_data[count_key] < (play_data[number_of_players_key] - 1): return -1
+    else: return play_data[count_key] - (play_data[number_of_players_key] - 1)
+
+def last_player_in_turn(play_data):
+    return play_data[number_of_players_key] == player_number(play_data)
+
+def remaining_tries(play_data):
+    return play_data[max_guesses_key] - turn_number(play_data)
+
+def last_chance(play_data):
+    return last_player_in_turn(play_data) and (remaining_tries(play_data) == 0)
+
 def turn(play_data):
     if is_multi_player(play_data): clear_screen()
-    print(f"Your hint is {play_data[play_data[count_key]][hint_key]}")
+    hint = play_data[current_player_last_guess_index(play_data)][hint_key]
     play_data[count_key] += 1
     play_data[play_data[count_key]] = {}
     if is_multi_player(play_data): process_multiplayer_turn_display(play_data)
     else: process_single_turn_display(play_data)
-    play_data[play_data[count_key]][guess_key] = input("Your guess is? ")
-    if is_guess_size_incorrect(play_data): play_data = process_incorrect_guess_size(play_data)
+    if is_multi_player(play_data) and (play_data[count_key] >= 0): play_data[exit_key] = wait_for_enter(play_data[exit_key])
+    print(f"Your hint is {hint}")
+    play_data[play_data[count_key]][guess_key] = request_guess(play_data, hint)
+    if play_data[play_data[count_key]][guess_key] == hint:  play_data[exit_key] = True
+    elif is_guess_size_incorrect(play_data): play_data = process_incorrect_guess_size(play_data)
     elif is_guess_incorrect(play_data): play_data = process_incorrect_guess(play_data)
+    if last_chance(play_data):  play_data[lost_key] = True
     return play_data
 
 def play(play_data, exit = False):
+    play_data[exit_key] = exit
     clear_screen()
     play_data[secret_word_key] = play_data[random_key].choice(play_data[word_list_key])
     play_data[count_key] = -1
     play_data[play_data[count_key]] = {}
     play_data[play_data[count_key]][guess_key] = ""
     play_data[play_data[count_key]][hint_key] = "_ " * len(play_data[secret_word_key])
-    play_data[number_of_players_key] = int(input("How many players? "))
-    while play_data[play_data[count_key]][guess_key] != play_data[secret_word_key]: play_data = turn(play_data)
-    if is_multi_player(play_data): process_multiplayer_win(play_data)
-    else: process_single_win(play_data)
-    again = input("Do you wish to play again [(Y)es/(N)o]? ")
-    if again.lower() in ["n", "no", ""]: exit = True
-    return exit
+    play_data[number_of_players_key] = request_number_of_players()
+    if play_data[number_of_players_key] == 0: play_data[exit_key] = True
+    play_data[max_guesses_key] = 5
+    play_data[lost_key] = False
+    while not play_data[exit_key] and not play_data[lost_key] and (play_data[play_data[count_key]][guess_key] != play_data[secret_word_key]): play_data = turn(play_data)
+    if not play_data[exit_key] and not play_data[lost_key] and is_multi_player(play_data): process_multiplayer_win(play_data)
+    elif not play_data[exit_key] and not play_data[lost_key] : process_single_win(play_data)
+    elif play_data[lost_key] : print("Better luck next time!")
+    return play_again(play_data[exit_key])
 
 def main():
     play_data = {}
@@ -120,5 +191,6 @@ def main():
     play_data[word_list_key] = ["apple", "cat", "dog", "pig", "cow", "sheep", "house"]
     exit = False
     while not exit: exit = play(play_data)
+    print("Have a great day!")
 
 main()
