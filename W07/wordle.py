@@ -1,10 +1,15 @@
-from audioop import mul
 import random
 import os
 
 empty = ""
 underscore = "_"
 default_list = ["dog", "cat", "pig", "cow", "ape", "sow", "sheep", "sleep", "house", "horse", "apple"]
+
+def main():
+    game = Wordle()
+    while not game.get_exit(): game.play_game()
+
+main()
 
 def clear_screen():
     print("\n" * 5)
@@ -341,9 +346,3 @@ class Wordle():
         else: print("Better luck next time!")
         if not (input("play again [(y)es/(n)o]?").lower() in ["y", "yes"]): self.set_exit(True)
         return self
-
-def main():
-    game = Wordle()
-    while not game.get_exit(): game.play_game()
-
-main()
