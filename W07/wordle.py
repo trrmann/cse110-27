@@ -1,20 +1,59 @@
 import ast
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 import random
 import os
+import shutil
+from ssl import CertificateError
+import requests
 
 empty = ""
 underscore = "_"
-default_list = ["dog", "cat", "pig", "cow", "ape", "sow", "sheep", "sleep", "house", "horse", "apple"]
 
 def clear_screen():
     print("\n" * 5)
     os.system("cls")
 
+def other(game):
+    other_file1 = "test.dat"
+    other_file2 = "test.txt"
+    other_file3 = "test.tmp"
+
+    shutil.copyfile(other_file1, other_file3)
+    if not game.file_exists(other_file1):
+        print("no file... create")
+        file = open(other_file1, "xt")
+        file.close()
+    file = open(other_file1, "rt")
+    file_raw_data = file.read()
+    if file_raw_data != "": file_data = ast.literal_eval(file_raw_data)
+    else: file_data = file_raw_data
+    file.close()
+    print(other_file1)
+    print(file_data)
+    if file_data == "":  file_data = {}
+    if "x" in file_data.keys(): print(f"x = {file_data['x']}")
+    if "y" in file_data.keys(): print(f"y = {file_data['y']}")
+    file_data["x"] = 1
+    file_data["y"] = 2
+    file = open(other_file1, "wt")
+    file.write(str(file_data))
+    file.close()
+    os.remove(other_file3)
+
+    now = datetime.now()
+
+    print(f"created:  {other_file2} - {game.file_created_datetime(other_file2)} - {game.file_created_age(other_file2)} - {game.is_data_filename_create_expired(other_file2)}")
+    print(f"now {now}")
+    game.request_enter_to_continue()
+
 def main():
     game = Wordle()
+    print(game.read_data_from_github())
+    game.request_enter_to_continue()
     while not game.get_exit(): game.play_game()
+    #other(game)
+    print(game)
 
 class Wordle():
     __random_key__ = "random"
@@ -35,7 +74,21 @@ class Wordle():
     __turn_number_key__ = "turn"
     __track_key__ = "track"
     __lost_key__ = "lost"
+    data_filename_key = "dataFilename"
+    data_filename_access_expire_age_days_key = "dataFilenameAccessExpireAgeDays"
+    data_filename_modify_expire_age_days_key = "dataFilenameModifyExpireAgeDays"
+    data_filename_create_expire_age_days_key = "dataFilenameCreateExpireAgeDays"
+
+    online_key = "online"
+    letters_key = "letters"
+    non_case_words_key = "non_case_words"
+    words_key = "words"
+    count_key = "count"
+    percent_key = "percent"
+    rank_key = "rank"
+
     __data__ = None
+    default_list = ["dog", "cat", "pig", "cow", "ape", "sow", "sheep", "sleep", "house", "horse", "apple"]
 
     def __new__(cls, *args, **kwargs):
         return super().__new__(cls)
@@ -45,19 +98,457 @@ class Wordle():
         self.init_game()
 
     def __repr__(self) -> str:
-        return f"{type(self).__name__}(className={self.className}, testName={self.testName}, numberOfFunctionsInDictionary={len(self.functionDictionary)}, numberOfTestCases={len(self.testCases)})"
+        string = f"\"{self.__exit_key__}\" : {self.get_exit()}"
+        string = f"{string}, \"{self.data_filename_access_expire_age_days_key}\" : {self.get_data_filename_access_expire_age_days()}"
+        string = f"{string}, \"{self.data_filename_modify_expire_age_days_key}\" : {self.get_data_filename_modify_expire_age_days()}"
+        string = f"{string}, \"{self.data_filename_create_expire_age_days_key}\" : {self.get_data_filename_create_expire_age_days()}"
+        string = f"{string}, \"{self.data_filename_key}\" : \"{self.get_data_filename()}\""
+        string = f"{string}, \"{self.__word_list_key__}\" : {self.get_word_list()}"
+        string = f"{string}, \"{self.__secret_word_key__}\" : \"{self.get_secret_word()}\""
+        string = f"{string}, \"{self.__number_of_players_key__}\" : {self.get_number_of_players()}"
+        string = f"{string}, \"{self.__player_number_key__}\" : {self.get_player_number()}"
+        string = f"{string}, \"{self.__max_turns_key__}\" : {self.get_max_turns()}"
+        string = f"{string}, \"{self.__super_hint_frequency_key__}\" : {self.get_super_hint_frequency()}"
+        string = f"{string}, \"{self.__players_key__}\" : {self.get_players()}"
+        string = f"{string}, \"{self.__multiplayer_init_key__}\" : {self.get_multiplayer_init()}"
+        string = f"{string}, \"{self.__guess_key__}\" : \"{self.get_guess()}\""
+        string = f"{string}, \"{self.__turn_number_key__}\" : {self.get_turn_number()}"
+        string = f"{string}, \"{self.__track_key__}\" : {self.get_track()}"
+        string = f"\( {string} \)"
+        string = f"\( \"{type(self).__name__}\" : {string} \)"
+        string = string.replace("\(", "{")
+        string = string.replace("\)", "}")
+        return string
+
+    def read_file(self, filename :str = None):
+        if filename == None: filename = self.get_data_filename()
+        file = open(filename, "rt")
+        file_raw_data = file.read()
+        if file_raw_data != "": data = ast.literal_eval(file_raw_data)
+        else: data = {}
+        file.close()
+        return data
+
+    def test_connection_to_github(self):
+        try:
+            print('Checking connection to Github...')
+            test = requests.get('https://api.github.com')
+            print('Connection to Github OK.')
+            return True
+        
+        except requests.exceptions.ConnectionError as err:
+            ('Connection aborted.', ConnectionResetError(10054, 'An existing connection was forcibly closed by the remote host', None, 10054, None))
+            print("connection closed!")
+            #raise err
+        except requests.exceptions.SSLError as err:
+            print('SSL Error. Adding custom certs to Certifi store...')
+            cafile = CertificateError.where()
+            with open('certicate.pem', 'rb') as infile:
+                customca = infile.read()
+            with open(cafile, 'ab') as outfile:
+                outfile.write(customca)
+            print('That might have worked.')
+            return False
+
+    def isAlpha(self, string):
+        s = string
+        return (len(s) == 1) and (s.lower() >= "a" and s.lower() <= "z")
+
+    def purify_alpha(self, string, min_len = 2):
+        if len(string) < min_len:
+            return string
+        else:
+            if self.isAlpha(string[0]) and self.isAlpha(string[len(string)-1]):
+                return string
+            elif self.isAlpha(string[0]):
+                return self.self.purify_alpha(string[0:len(string)-1], min_len)
+            elif self.isAlpha(string[len(string)-1]):
+                return self.self.purify_alpha(string[1:len(string)], min_len)
+            else:
+                return self.self.purify_alpha(string[0:len(string)-1], min_len)
+
+    def has_letters(self, string):
+        if string == None:
+            return False
+        else:
+            count=0
+            for letter in string:
+                if self.isAlpha(letter): count = count + 1
+            return count > 0
+
+    def only_letters(self, string):
+        if string == None:
+            return string
+        else:
+            return all(self.isAlpha(letter) for letter in string)
+
+    def get_bible_strings(self):
+        data = {}
+        data[self.online_key] = False
+        if self.test_connection_to_github():
+            data[self.online_key] = True
+            kjv_scriptures_file = "https://raw.githubusercontent.com/beandog/lds-scriptures/master/text/kjv-scriptures.txt"
+            lds_scriptures_file = "https://raw.githubusercontent.com/beandog/lds-scriptures/master/text/lds-scriptures.txt"
+            kjv_scriptures = request.Request.get(url=kjv_scriptures_file, params={"owner":"beandog", "repo":"lds-scriptures", "path":"text/kjv-scriptures.txt", "ref":"master", "accept":"application/text"}, stream = True)
+            lds_scriptures = request.Request.get(url=lds_scriptures_file, params={"owner":"beandog", "repo":"lds-scriptures", "path":"text/lds-scriptures.txt", "ref":"master", "accept":"application/text"}, stream = True)
+            scriptures = f"{kjv_scriptures.text}\n{lds_scriptures.text}"
+            lines = scriptures.split("\n")
+            non_case_words = {}
+            words = {}
+            letters = {}
+            min_len = 1
+            word_count = 0
+            for line in lines:
+                line_words = line.split(" ")
+                for word in line_words:
+                    word = self.purify_alpha(word, min_len)
+                    if self.only_letters(word) and (len(word) >= min_len):
+                        if not(word in words.keys()): 
+                            words[word] = 0
+                            non_case_words[word.lower()] = 0
+                        words[word] = words[word] + 1
+                        non_case_words[word.lower()] = non_case_words[word.lower()] + 1
+                        word_count = word_count + 1
+                        for letter in word.lower():
+                            if not(letter in letters.keys()):
+                                letters[letter] = 0
+                            letters[letter] = letters[letter] + 1
+                    elif self.has_letters(word) and (len(word) >= (min_len + 2)) and ("'" in word):
+                        if self.only_letters(word[0:len(word)-2]) and (len(word[0:len(word)-2]) >= min_len):
+                            if not(word in words.keys()): 
+                                words[word] = 0
+                                non_case_words[word.lower()] = 0
+                            words[word] = words[word] + 1
+                            non_case_words[word.lower()] = non_case_words[word.lower()] + 1
+                            word_count = word_count + 1
+                            for letter in word.lower():
+                                if self.isAlpha(letter):
+                                    if not(letter in letters.keys()):
+                                        letters[letter] = 0
+                                    letters[letter] = letters[letter] + 1
+                            word = word[0:len(word)-2]
+                            if not(word in words.keys()): 
+                                words[word] = 0
+                                non_case_words[word.lower()] = 0
+                            words[word] = words[word] + 1
+                            non_case_words[word.lower()] = non_case_words[word.lower()] + 1
+                        elif self.only_letters(word[2:len(word)]) and (len(word[1:len(word)]) >= min_len):
+                            if not(word in words.keys()): 
+                                words[word] = 0
+                                non_case_words[word.lower()] = 0
+                            words[word] = words[word] + 1
+                            non_case_words[word.lower()] = non_case_words[word.lower()] + 1
+                            word_count = word_count + 1
+                            for letter in word.lower():
+                                if self.isAlpha(letter):
+                                    if not(letter in letters.keys()):
+                                        letters[letter] = 0
+                                    letters[letter] = letters[letter] + 1
+                            word = word[0:len(word)-2]
+                            if not(word in words.keys()): 
+                                words[word] = 0
+                                non_case_words[word.lower()] = 0
+                            words[word] = words[word] + 1
+                            non_case_words[word.lower()] = non_case_words[word.lower()] + 1
+                        elif self.has_letters(word) and not("--" in word) and ("-" in word) and (len(word) >= (min_len + 1)):
+                            if not(word in words.keys()): 
+                                words[word] = 0
+                                non_case_words[word.lower()] = 0
+                            words[word] = words[word] + 1
+                            non_case_words[word.lower()] = non_case_words[word.lower()] + 1
+                            word_count = word_count + 1
+                            for letter in word.lower():
+                                if self.isAlpha(letter):
+                                    if not(letter in letters.keys()):
+                                        letters[letter] = 0
+                                    letters[letter] = letters[letter] + 1
+                        else:
+                            print(f"X'X {len(words.keys())} {word}")
+                    elif self.has_letters(word) and ("--" in word) and (len(word) >= ((min_len * 2) + 2)):
+                        pair = word.split("--")
+                        for pair_word in pair:
+                            if self.only_letters(pair_word) and (len(pair_word) >= min_len):
+                                if not(pair_word in words.keys()): 
+                                    words[pair_word] = 0
+                                    non_case_words[pair_word.lower()] = 0
+                                words[pair_word] = words[pair_word] + 1
+                                non_case_words[pair_word.lower()] = non_case_words[pair_word.lower()] + 1
+                                word_count = word_count + 1
+                                for letter in pair_word.lower():
+                                    if self.isAlpha(letter):
+                                        if not(letter in letters.keys()):
+                                            letters[letter] = 0
+                                        letters[letter] = letters[letter] + 1
+                            else:
+                                #print(f"X--X {len(words.keys())} {word} {pair} {pair_word}")
+                                pass
+                    elif self.has_letters(word) and (";" in word) and (len(word) >= ((min_len * 2) + 1)):
+                        pair = word.split(";")
+                        for pair_word in pair:
+                            if self.only_letters(pair_word) and (len(pair_word) >= min_len):
+                                if not(pair_word in words.keys()): 
+                                    words[pair_word] = 0
+                                    non_case_words[pair_word.lower()] = 0
+                                words[pair_word] = words[pair_word] + 1
+                                non_case_words[pair_word.lower()] = non_case_words[pair_word.lower()] + 1
+                                word_count = word_count + 1
+                                for letter in pair_word.lower():
+                                    if self.isAlpha(letter):
+                                        if not(letter in letters.keys()):
+                                            letters[letter] = 0
+                                        letters[letter] = letters[letter] + 1
+                            else:
+                                #print(f"X--X {len(words.keys())} {word} {pair} {pair_word}")
+                                pass
+                    elif self.has_letters(word) and ("," in word) and (len(word) >= ((min_len * 2) + 1)):
+                        pair = word.split(",")
+                        for pair_word in pair:
+                            if self.only_letters(pair_word) and (len(pair_word) >= min_len):
+                                if not(pair_word in words.keys()): 
+                                    words[pair_word] = 0
+                                    non_case_words[pair_word.lower()] = 0
+                                words[pair_word] = words[pair_word] + 1
+                                non_case_words[pair_word.lower()] = non_case_words[pair_word.lower()] + 1
+                                word_count = word_count + 1
+                                for letter in pair_word.lower():
+                                    if self.isAlpha(letter):
+                                        if not(letter in letters.keys()):
+                                            letters[letter] = 0
+                                        letters[letter] = letters[letter] + 1
+                            else:
+                                #print(f"X--X {len(words.keys())} {word} {pair} {pair_word}")
+                                pass
+                    elif self.has_letters(word) and ("." in word) and (len(word) >= ((min_len * 2) + 1)):
+                        pair = word.split(".")
+                        for pair_word in pair:
+                            if self.only_letters(pair_word) and (len(pair_word) >= min_len):
+                                if not(pair_word in words.keys()): 
+                                    words[pair_word] = 0
+                                    non_case_words[pair_word.lower()] = 0
+                                words[pair_word] = words[pair_word] + 1
+                                non_case_words[pair_word.lower()] = non_case_words[pair_word.lower()] + 1
+                                word_count = word_count + 1
+                                for letter in pair_word.lower():
+                                    if self.isAlpha(letter):
+                                        if not(letter in letters.keys()):
+                                            letters[letter] = 0
+                                        letters[letter] = letters[letter] + 1
+                            else:
+                                #print(f"X--X {len(words.keys())} {word} {pair} {pair_word}")
+                                pass
+                    elif self.has_letters(word) and not("--" in word) and ("-" in word) and (len(word) >= (min_len + 1)):
+                        if not(word in words.keys()): 
+                            words[word] = 0
+                            non_case_words[word.lower()] = 0
+                        words[word] = words[word] + 1
+                        non_case_words[word.lower()] = non_case_words[word.lower()] + 1
+                        word_count = word_count + 1
+                        for letter in word.lower():
+                            if self.isAlpha(letter):
+                                if not(letter in letters.keys()):
+                                    letters[letter] = 0
+                                letters[letter] = letters[letter] + 1
+                    elif self.has_letters(word) and (len(word) >= min_len) and not(word in words.keys()):
+                        print(f"{len(words.keys())} {word}")
+            #            print(word)
+            #    print(f"{line_count}  {line}")
+            #    line_count = line_count + 1
+            #print(words.keys())
+            letter_count = 0
+            for letter in letters.keys(): letter_count = letter_count + letters[letter]
+            by_per = {}
+            for letter in letters.keys():
+                count = letters[letter]
+                letters[letter] = {}
+                letters[letter][self.count_key] = count
+                letters[letter][self.percent_key] = letters[letter][self.count_key] / letter_count * 100
+                by_per[letters[letter][self.percent_key]] = letter
+            pk = [*by_per.keys()]
+            pk.sort(reverse=True)
+            rnk = {}
+            for idx in range(len(pk)):
+                rnk[by_per[pk[idx]]] = idx + 1
+            for letter in letters.keys():
+                letters[letter][self.rank_key] = rnk[letter]
+            word_count = 0
+            for word in non_case_words.keys(): word_count = word_count + non_case_words[word]
+            by_per = {}
+            for word in non_case_words.keys():
+                count = non_case_words[word]
+                non_case_words[word] = {}
+                non_case_words[word][self.count_key] = count
+                non_case_words[word][self.percent_key] = non_case_words[word][self.count_key] / word_count * 100
+                by_per[non_case_words[word][self.percent_key]] = word
+            pk = [*by_per.keys()]
+            pk.sort(reverse=True)
+            rnk = {}
+            for idx in range(len(pk)):
+                rnk[by_per[pk[idx]]] = idx + 1
+                if idx <5 or idx >= len(pk)-5:
+                    pass
+                #    print(f"{rnk[by_per[pk[idx]]]} {by_per[pk[idx]]} {non_case_words[by_per[pk[idx]]]}")
+            for word in non_case_words.keys():
+                if word in rnk.keys(): non_case_words[word][self.rank_key] = rnk[word]
+                else:  non_case_words[word][self.rank_key] = rnk[by_per[non_case_words[word][self.percent_key]]]
+            for idx in range(len(non_case_words.keys())):
+                if idx <5 or idx >= len(non_case_words)-5:
+                    pass
+                #    print(f"{idx} {[*(non_case_words.keys())][idx]} {non_case_words[[*(non_case_words.keys())][idx]]}")
+            print(f"words:  {len(words.keys())} - non_case_words:  {len(non_case_words.keys())} - word_count:  {word_count} - letter_count:  {letter_count} - letters:  {len(letters.keys())}")
+            data[self.letters_key] = letters
+            data[self.non_case_words_key] = non_case_words
+            data[self.words_key] = words
+        else:
+            data[self.words_key] = {}
+        return data
+
+    def read_data_from_github(self):
+        data = self.get_bible_strings()
+        return data
+
+    def get_default_datafile_data(self):
+        default_data = {}
+        word_list = {}
+        for index in range(len(self.default_list)):
+            word = self.default_list[index]
+            word_list[word] = {}
+            word_list[word]["display"] = word
+            word_list[word]["count"] = 1
+            word_list[word]["points"] = 5
+        default_data[self.__word_list_key__] = word_list
+        return default_data
+
+    def create_empty_file(self, filename :str = None):
+        if filename == None: filename = self.get_data_filename()
+        if self.file_exists(filename): os.remove(filename)
+        file = open(filename, "xt")
+        file.close()
+
+    def write_data_to_file(self, filename :str = None, data :dict = {}):
+        if filename == None: filename = self.get_data_filename()
+        file = open(filename, "wt")
+        file.write(str(data))
+        file.close()
+
+    def build_file(self, filename :str = None):
+        if filename == None: filename = self.get_data_filename()
+        github_data = self.read_data_from_github()
+        if github_data != {}:
+            self.create_empty_file(filename)
+            if not(self.__word_list_key__ in github_data.keys()): self.write_data_to_file(filename, self.get_default_datafile_data())
+            else: self.write_data_to_file(filename, github_data)
+        elif (not self.file_exists(filename)) and (github_data == {}):
+            self.create_empty_file(filename)
+            self.write_data_to_file(filename, self.get_default_datafile_data())
+        else:
+            data = self.read_file(filename)
+            if self.__word_list_key__ not in data.keys():
+                self.create_empty_file(filename)
+                self.write_data_to_file(filename, self.get_default_datafile_data())
+
+    def load_word_list(self):
+        if (self.is_data_filename_create_expired() == None) or (self.is_data_filename_modify_expired() == None) or (self.is_data_filename_access_expired() == None) or (not self.file_exists()): self.build_file()
+        if self.is_data_filename_create_expired() or self.is_data_filename_modify_expired() or self.is_data_filename_access_expired(): self.build_file()
+        file_data = self.read_file()
+        self.set_word_list(file_data[self.__word_list_key__])
+
+    def is_data_filename_access_expired(self, filename :str = None):
+        if filename == None: filename = self.get_data_filename()
+        if self.get_data_filename_access_expire_age_days() < 1: return False
+        elif self.file_accessed_age(filename) != None: return (self.file_accessed_age(filename).days >= self.get_data_filename_access_expire_age_days())
+        else: return True
+
+    def is_data_filename_modify_expired(self, filename :str = None):
+        if filename == None: filename = self.get_data_filename()
+        if self.get_data_filename_modify_expire_age_days() < 1: return False
+        elif self.file_modified_age(filename) != None: return (self.file_modified_age(filename).days >= self.get_data_filename_modify_expire_age_days())
+        else: return True
+
+    def is_data_filename_create_expired(self, filename :str = None):
+        if filename == None: filename = self.get_data_filename()
+        if self.get_data_filename_create_expire_age_days() < 1: return False
+        elif self.file_created_age(filename) != None:  return (self.file_created_age(filename).days >= self.get_data_filename_create_expire_age_days())
+        else: return True
+
+    def set_data_filename_access_expire_age_days(self, access_expire_age_days :int = 3):
+        self.__data__[self.data_filename_access_expire_age_days_key] = int(access_expire_age_days)
+        return self
+
+    def get_data_filename_access_expire_age_days(self, access_expire_age_days :int = None):
+        if self.data_filename_access_expire_age_days_key in self.__data__.keys(): return self.__data__[self.data_filename_access_expire_age_days_key]
+        elif access_expire_age_days != None: return self.set_data_filename_access_expire_age_days(int(access_expire_age_days)).get_data_filename_access_expire_age_days()
+        else: return self.set_data_filename_access_expire_age_days().get_data_filename_access_expire_age_days()
+
+    def set_data_filename_modify_expire_age_days(self, modify_expire_age_days :int = 7):
+        self.__data__[self.data_filename_modify_expire_age_days_key] = int(modify_expire_age_days)
+        return self
+
+    def get_data_filename_modify_expire_age_days(self, modify_expire_age_days :int = None):
+        if self.data_filename_modify_expire_age_days_key in self.__data__.keys(): return self.__data__[self.data_filename_modify_expire_age_days_key]
+        elif modify_expire_age_days != None: return self.set_data_filename_modify_expire_age_days(int(modify_expire_age_days)).get_data_filename_modify_expire_age_days()
+        else: return self.set_data_filename_modify_expire_age_days().get_data_filename_modify_expire_age_days()
+
+    def set_data_filename_create_expire_age_days(self, create_expire_age_days :int = 30):
+        self.__data__[self.data_filename_create_expire_age_days_key] = int(create_expire_age_days)
+        return self
+
+    def get_data_filename_create_expire_age_days(self, create_expire_age_days :int = None):
+        if self.data_filename_create_expire_age_days_key in self.__data__.keys(): return self.__data__[self.data_filename_create_expire_age_days_key]
+        elif create_expire_age_days != None: return self.set_data_filename_create_expire_age_days(int(create_expire_age_days)).get_data_filename_create_expire_age_days()
+        else: return self.set_data_filename_create_expire_age_days().get_data_filename_create_expire_age_days()
+
+    def file_created_age(self, filename :str = None):
+        if filename == None: filename = self.get_data_filename()
+        if self.is_file(filename): return datetime.now() - self.file_created_datetime(filename)
+        else: return None
+
+    def file_modified_age(self, filename :str = None):
+        if filename == None: filename = self.get_data_filename()
+        if self.is_file(filename): return datetime.now() - self.file_modified_datetime(filename)
+        else: return None
+
+    def file_accessed_age(self, filename :str = None):
+        if filename == None: filename = self.get_data_filename()
+        if self.is_file(filename): return datetime.now() - self.file_accessed_datetime(filename)
+        else: return None
+
+    def file_created_datetime(self, filename :str = None):
+        if filename == None: filename = self.get_data_filename()
+        if self.is_file(filename): return datetime.fromtimestamp(os.path.getctime(filename))
+        else: return None
+
+    def file_modified_datetime(self, filename :str = None):
+        if filename == None: filename = self.get_data_filename()
+        if self.is_file(filename): return datetime.fromtimestamp(os.path.getmtime(filename))
+        else: return None
+
+    def file_accessed_datetime(self, filename :str = None):
+        if filename == None: filename = self.get_data_filename()
+        if self.is_file(filename): return datetime.fromtimestamp(os.path.getatime(filename))
+        else: return None
+
+    def file_exists(self, filename :str = None):
+        if filename == None: filename = self.get_data_filename()
+        return os.path.exists(filename)
+
+    def is_file(self, filename :str = None):
+        if filename == None: filename = self.get_data_filename()
+        if self.file_exists(filename): return Path(filename).is_file
+        else: return False
+
+    def set_data_filename(self, data_filename :str = "data.dat"):
+        self.__data__[self.data_filename_key] = str(data_filename)
+        return self
+
+    def get_data_filename(self, data_filename :str = None):
+        if self.data_filename_key in self.__data__.keys(): return self.__data__[self.data_filename_key]
+        elif data_filename != None: return self.set_data_filename(str(data_filename)).get_data_filename()
+        else: return self.set_data_filename().get_data_filename()
 
     def set_random(self, random = random.Random()):
         self.__data__[self.__random_key__] = random
         self.__data__[self.__random_key__].seed()
         return self
-
-    def file_exists(self, file_name):
-        return os.path.exists(file_name)
-
-    def is_file(self, file_name):
-        if self.file_exists(file_name): return Path(file_name).is_file
-        else: return False
 
     def get_random(self):
         if self.__random_key__ in self.__data__.keys(): return self.__data__[self.__random_key__]
@@ -91,7 +582,7 @@ class Wordle():
         else: return self.set_turn_number().get_turn_number()
 
     def set_secret_word(self, secret_word :str = None):
-        if secret_word == None: secret_word = self.get_random().choice(self.get_word_list())
+        if secret_word == None: secret_word = self.get_random().choice([self.get_word_list().keys()])
         self.__data__[self.__secret_word_key__] = str(secret_word)
         return self
 
@@ -100,13 +591,13 @@ class Wordle():
         elif secret_word != None: return self.set_secret_word(str(secret_word)).get_secret_word()
         else: return self.set_secret_word().get_secret_word()
 
-    def set_word_list(self, word_list :list = []):
-        self.__data__[self.__word_list_key__] = list(word_list)
+    def set_word_list(self, word_list :dict = {}):
+        self.__data__[self.__word_list_key__] = dict(word_list)
         return self
 
-    def get_word_list(self, word_list :list = None):
-        if self.__word_list_key__ in self.__data__.keys(): return list(self.__data__[self.__word_list_key__])
-        elif word_list != None: return self.set_word_list(list(word_list)).get_word_list()
+    def get_word_list(self, word_list :dict = None):
+        if self.__word_list_key__ in self.__data__.keys(): return dict(self.__data__[self.__word_list_key__])
+        elif word_list != None: return self.set_word_list(dict(word_list)).get_word_list()
         else: return self.set_word_list().get_word_list()
 
     def set_hint(self, index :int = None, hint :str = empty):
@@ -260,7 +751,7 @@ class Wordle():
 
     def init_game(self, exit :bool = False):
         self.set_exit(bool(exit))
-        self.set_word_list(default_list)
+        self.load_word_list()
 
     def request_enter_to_continue(self):
         try:
@@ -347,7 +838,7 @@ class Wordle():
         tries = 0
         if self.request_confirm_option_super_hints(tries, max_tries):
             value = -1
-            while (value < 0 or ((self.get_max_turns()!=0 and (value > self.get_max_turns())))) and (tries < max_tries):
+            while (value < 0 or ((self.get_max_turns()>2 and (value >= (self.get_max_turns()-1))))) and (tries < max_tries):
                 try:
                     if self.get_max_turns() > 0:
                         value = int(input("How many super hints, including the last hit, do you want as a minimum? "))
@@ -365,9 +856,7 @@ class Wordle():
                 print(f"I will set the number of super hints to {max_tries_default}.")
                 super_hints = max_tries_default
             else:
-                if self.get_max_turns() > 0:
-                    if value == self.get_max_turns(): super_hints = 1
-                    elif value > 0: super_hints = int(self.get_max_turns() / value)
+                if (self.get_max_turns() > 0) and (value > 0): super_hints = int(self.get_max_turns() / value)
                 else: super_hints = value 
         return super_hints
 
@@ -441,9 +930,9 @@ class Wordle():
             if (self.get_max_turns() >= 1) and (self.get_max_turns()-self.get_turn_number() == 1): print("last chance!")
             elif (self.get_max_turns() >= 1) and (self.get_turn_number() < (self.get_max_turns())): print(f"{self.get_max_turns()-self.get_turn_number() - 1} turns remaining after this turn!")
             print(f"Your hint is {self.get_hint()}.")
-            if (self.get_max_turns() >= 1) and (self.get_max_turns()-self.get_turn_number() == 1): print(f"Your last hint is {self.get_last_hint()[self.__puzzle_key__]}with \"{self.get_last_hint()[self.__letters_key__]}\" letters")
+            if (self.get_max_turns() > 1) and (self.get_max_turns()-self.get_turn_number() == 1): print(f"Your last hint is {self.get_last_hint()[self.__puzzle_key__]}with \"{self.get_last_hint()[self.__letters_key__]}\" letters")
             elif ((self.get_turn_number() + 1) > 0) and (self.get_super_hint_frequency() >= 1):
-                if (((self.get_turn_number() + 1) % self.get_super_hint_frequency()) == 0): print(f"Your super hint is {self.get_last_hint()[self.__puzzle_key__]}with \"{self.get_last_hint()[self.__letters_key__]}\" letters")
+                if (self.get_turn_number() >= 1) and (((self.get_turn_number() + 1) % self.get_super_hint_frequency()) == 0): print(f"Your super hint is {self.get_last_hint()[self.__puzzle_key__]}with \"{self.get_last_hint()[self.__letters_key__]}\" letters")
             #have the user make a guess
             self.set_guess(self.request_valid_guess())
             if not self.get_lost() and not self.get_exit():
