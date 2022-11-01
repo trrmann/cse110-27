@@ -8,165 +8,13 @@ empty = ""
 underscore = "_"
 default_list = ["dog", "cat", "pig", "cow", "ape", "sow", "sheep", "sleep", "house", "horse", "apple"]
 
-def date_to_dict(date_time: datetime = datetime.datetime.now()):
-    return {"type":"datetime",
-    "year" : date_time.year,
-    "month" : date_time.month,
-    "day" : date_time.day,
-    "hour" : date_time.hour,
-    "minute" : date_time.minute,
-    "second" : date_time.second,
-    "microsecond" : date_time.microsecond}
-
-def delta_to_dict(delta: datetime.timedelta = datetime.timedelta(0,0,0)):
-    return {"type":"delta",
-    "days" : delta.days,
-    "seconds" : delta.seconds,
-    "microseconds" : delta.microseconds}
-
-def dict_to_date(dictionary: dict = date_to_dict()):
-    match dictionary["type"]:
-        case "datetime":
-            return datetime.datetime(dictionary["year"], dictionary["month"], dictionary["day"], dictionary["hour"], dictionary["minute"], dictionary["second"], dictionary["microsecond"])
-        case "delta":
-            return dict_to_delta(dictionary)
-        case _:
-            return None
-
-def dict_to_delta(dictionary: dict = delta_to_dict()):
-    match dictionary["type"]:
-        case "delta":
-            return datetime.timedelta(dictionary["days"], dictionary["seconds"], dictionary["microseconds"])
-        case "datetime":
-            return dict_to_date(dictionary)
-        case _:
-            return None
-
-def date_diff_dict(first_date: datetime = datetime.datetime.now(), second_date: datetime = datetime.datetime.now()):
-    return delta_to_dict(second_date - first_date)
-
-def date_dict_to_delta_dict(dictionary: dict = date_to_dict()):
-    now = datetime.datetime.now()
-    if dictionary["year"] < datetime.MINYEAR:
-        year_mod = int(datetime.MINYEAR - dictionary["year"])
-    elif dictionary["year"] > datetime.MAXYEAR:
-        year_mod = int(dictionary["year"] - datetime.MAXYEAR)
-    else:
-        year_mod = 0
-    if dictionary["month"] < 1:
-        month_mod = int(1 - dictionary["month"])
-    elif dictionary["month"] > 12:
-        month_mod = int(dictionary["month"] - 12)
-    else:
-        month_mod = 0
-    if dictionary["day"] < 1:
-        day_mod = int(1 - dictionary["day"])
-    elif dictionary["day"] > 31:
-        day_mod = int(dictionary["day"] - 31)
-    else:
-        day_mod = 0
-    dictionary["year"] += year_mod
-    dictionary["month"] += month_mod
-    dictionary["day"] += day_mod
-    dictionary = date_to_dict(dict_to_date(dictionary))
-    dictionary["year"] -= year_mod
-    dictionary["month"] -= month_mod
-    dictionary["day"] -= day_mod
-    minute_to_seconds_factor = 60
-    hour_to_seconds_factor = minute_to_seconds_factor * 60
-    month_to_days_factor = ((datetime.datetime(now.year + 16, now.month, now.day, now.hour, now.minute, now.second, now.microsecond) - datetime.datetime(now.year, now.month, now.day, now.hour, now.minute, now.second, now.microsecond)).days/(12*16))
-    year_to_days_factor = ((datetime.datetime(now.year + 16, now.month, now.day, now.hour, now.minute, now.second, now.microsecond) - datetime.datetime(now.year, now.month, now.day, now.hour, now.minute, now.second, now.microsecond)).days/16)
-    return delta_to_dict(datetime.timedelta(int(dictionary["day"] + dictionary["month"] * month_to_days_factor + dictionary["year"] * year_to_days_factor), int(dictionary["second"] + dictionary["minute"] * minute_to_seconds_factor + dictionary["hour"] * hour_to_seconds_factor), dictionary["microsecond"]))
-
-def delta_dict_to_date_dict(dictionary: dict = delta_to_dict()):
-    now = datetime.datetime.now()
-    dictionary = delta_to_dict(dict_to_delta(dictionary))
-    minute_to_seconds_factor = 60
-    hour_to_seconds_factor = minute_to_seconds_factor * 60
-    month_to_days_factor = ((datetime.datetime(now.year + 16, now.month, now.day, now.hour, now.minute, now.second, now.microsecond)\
-        - datetime.datetime(now.year, now.month, now.day, now.hour, now.minute, now.second, now.microsecond)).days/(12*16))
-    year_to_days_factor = ((datetime.datetime(now.year + 16, now.month, now.day, now.hour, now.minute, now.second, now.microsecond)\
-        - datetime.datetime(now.year, now.month, now.day, now.hour, now.minute, now.second, now.microsecond)).days/16)
-    microseconds = dictionary["microseconds"]
-    seconds = dictionary["seconds"]
-    days = dictionary["days"]
-    microsecond = microseconds
-    hour = divmod(seconds, hour_to_seconds_factor)[0]
-    seconds = seconds - (hour * hour_to_seconds_factor)
-    minute = divmod(seconds, minute_to_seconds_factor)[0]
-    second = seconds - (minute * minute_to_seconds_factor)
-    year = divmod(days, year_to_days_factor)[0]
-    days = days - (year * year_to_days_factor)
-    month = divmod(days, month_to_days_factor)[0]
-    day = days - (month * month_to_days_factor)
-    if year < datetime.MINYEAR:
-        year_mod = int(datetime.MINYEAR - year)
-    elif year > datetime.MAXYEAR:
-        year_mod = int(year - datetime.MAXYEAR)
-    else:
-        year_mod = 0
-    if month < 1:
-        month_mod = int(1 - month)
-    elif month > 12:
-        month_mod = int(month - 12)
-    else:
-        month_mod = 0
-    if day < 1:
-        day_mod = int(1 - day)
-    elif day > 31:
-        day_mod = int(day - 31)
-    else:
-        day_mod = 0
-    date_dict = date_to_dict(datetime.datetime(int(year) + year_mod, int(month) + month_mod, int(day) + day_mod, int(hour), int(minute), int(second), int(microsecond)))
-    date_dict["year"] = date_dict["year"] - year_mod
-    date_dict["month"] = date_dict["month"] - month_mod
-    date_dict["day"] = date_dict["day"] - day_mod
-    return date_dict
-
 def clear_screen():
     print("\n" * 5)
     os.system("cls")
 
 def main():
     game = Wordle()
-    #while not game.get_exit(): game.play_game()
-
-    file_name = "data.dat"
-    if not game.file_exists(file_name):
-        print("no file... create")
-        file = open(file_name, "xt")
-        file.close()
-    file = open(file_name, "rt")
-    file_data = ast.literal_eval(file.read())
-    file.close()
-    print(file_data)
-    if file_data == "":  file_data = {}
-    if "x" in file_data.keys(): print(f"x = {file_data['x']}")
-    if "y" in file_data.keys(): print(f"y = {file_data['y']}")
-    file_data["x"] = 1
-    file_data["y"] = 2
-    file = open(file_name, "wt")
-    file.write(str(file_data))
-    file.close()
-
-    created = datetime.datetime.fromtimestamp(os.path.getctime(file_name))
-    modified = datetime.datetime.fromtimestamp(os.path.getmtime(file_name))
-    accessed = datetime.datetime.fromtimestamp(os.path.getatime(file_name))
-
-    create_age = delta_dict_to_date_dict(date_diff_dict(created))
-    modified_age = delta_dict_to_date_dict(date_diff_dict(modified))
-    accessed_age = delta_dict_to_date_dict(date_diff_dict(accessed))
-
-    print(f"created:  {created}")
-    print(f"last modified:  {modified}")
-    print(f"last accessed:  {accessed}")
-    print(f"now {datetime.datetime.now()}")
-
-    print(f"create age:  {create_age['year']} years {create_age['month']} months {create_age['day']} days {create_age['hour']} hours {create_age['minute']} minutes {create_age['second']} seconds")
-    print(f"modified age:  {modified_age['year']} years {modified_age['month']} months {modified_age['day']} days {modified_age['hour']} hours {modified_age['minute']} minutes {modified_age['second']} seconds")
-    print(f"last accessed age:  {accessed_age['year']} years {accessed_age['month']} months {accessed_age['day']} days {accessed_age['hour']} hours {accessed_age['minute']} minutes {accessed_age['second']} seconds")
-
-
+    while not game.get_exit(): game.play_game()
 
 class Wordle():
     __random_key__ = "random"
@@ -499,10 +347,10 @@ class Wordle():
         tries = 0
         if self.request_confirm_option_super_hints(tries, max_tries):
             value = -1
-            while (value < 0 or (value > self.get_max_turns())) and (tries < max_tries):
+            while (value < 0 or ((self.get_max_turns()!=0 and (value > self.get_max_turns())))) and (tries < max_tries):
                 try:
                     if self.get_max_turns() > 0:
-                        value = int(input("How many super hints, including the last hit, do you want as a minimum? ")) + 1
+                        value = int(input("How many super hints, including the last hit, do you want as a minimum? "))
                     else:
                         value = int(input("How often do you want super hints? "))
                 except ValueError:
@@ -519,7 +367,7 @@ class Wordle():
             else:
                 if self.get_max_turns() > 0:
                     if value == self.get_max_turns(): super_hints = 1
-                    elif value > 0: super_hints = int(self.get_max_turns() / super_hints)
+                    elif value > 0: super_hints = int(self.get_max_turns() / value)
                 else: super_hints = value 
         return super_hints
 
@@ -591,7 +439,7 @@ class Wordle():
                 self.request_enter_to_continue()
             else: print(f"Turn {self.get_turn_number() + 1}")
             if (self.get_max_turns() >= 1) and (self.get_max_turns()-self.get_turn_number() == 1): print("last chance!")
-            elif (self.get_max_turns() >= 1) and (self.get_turn_number() < (self.get_max_turns())): print(f"{self.get_max_turns()-self.get_turn_number()} turns remaining!")
+            elif (self.get_max_turns() >= 1) and (self.get_turn_number() < (self.get_max_turns())): print(f"{self.get_max_turns()-self.get_turn_number() - 1} turns remaining after this turn!")
             print(f"Your hint is {self.get_hint()}.")
             if (self.get_max_turns() >= 1) and (self.get_max_turns()-self.get_turn_number() == 1): print(f"Your last hint is {self.get_last_hint()[self.__puzzle_key__]}with \"{self.get_last_hint()[self.__letters_key__]}\" letters")
             elif ((self.get_turn_number() + 1) > 0) and (self.get_super_hint_frequency() >= 1):
