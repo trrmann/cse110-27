@@ -1,0 +1,59 @@
+CONNECTED(00000234)
+---
+Certificate chain
+ 0 s:C = US, ST = California, L = San Francisco, O = "Cloudflare, Inc.", CN = sni.cloudflaressl.com
+   i:C = US, ST = California, O = Zscaler Inc., OU = Zscaler Inc., CN = "Zscaler Intermediate Root CA (zscalertwo.net) (t) "
+ 1 s:C = US, ST = California, O = Zscaler Inc., OU = Zscaler Inc., CN = "Zscaler Intermediate Root CA (zscalertwo.net) (t) "
+   i:C = US, ST = California, O = Zscaler Inc., OU = Zscaler Inc., CN = Zscaler Intermediate Root CA (zscalertwo.net), emailAddress = support@zscaler.com
+ 2 s:C = US, ST = California, O = Zscaler Inc., OU = Zscaler Inc., CN = Zscaler Intermediate Root CA (zscalertwo.net), emailAddress = support@zscaler.com
+   i:C = US, ST = California, L = San Jose, O = Zscaler Inc., OU = Zscaler Inc., CN = Zscaler Root CA, emailAddress = support@zscaler.com
+---
+Server certificate
+-----BEGIN CERTIFICATE-----
+MIIETTCCAzWgAwIBAgIQd9997RNDWQj46+0mHfmPpjANBgkqhkiG9w0BAQsFADCB
+jTELMAkGA1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWExFTATBgNVBAoMDFpz
+Y2FsZXIgSW5jLjEVMBMGA1UECwwMWnNjYWxlciBJbmMuMTswOQYDVQQDDDJac2Nh
+bGVyIEludGVybWVkaWF0ZSBSb290IENBICh6c2NhbGVydHdvLm5ldCkgKHQpIDAe
+Fw0yMjEwMjIwNzUyMjBaFw0yMjExMDUwNzUyMjBaMHUxCzAJBgNVBAYTAlVTMRMw
+EQYDVQQIEwpDYWxpZm9ybmlhMRYwFAYDVQQHEw1TYW4gRnJhbmNpc2NvMRkwFwYD
+VQQKExBDbG91ZGZsYXJlLCBJbmMuMR4wHAYDVQQDExVzbmkuY2xvdWRmbGFyZXNz
+bC5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDjTuFGftdVUr58
+VRLXTxduUwGFXNiHw6KIhpqrcadKiVExo1vsgp8QNkHh0MxlPW0BcI18FAVk+Hly
+b2YbcMhD/aCkSKvvdueI40BTmaQVEaFm3odoMMnIK3n02JpQu/cnsbsHNyEaYH9T
+dJsyHcJf22WZr01V8H5RQEjMEfKRoFtG7vf6UGuIPDGfHUap6y+3t9ZjYB8sW3GX
+O1cMHTZkreiFFOFlbGOs5e0ZvHVuAUyZIIcYnUb3ZA058uQDKka90ATgjfGzUr2B
+Q8YP92wcT8FBNG74oly7Fo7NIpnlr+MbBVzIQyZONP1TfJhdZRqQLP82RGroukdH
+ioe2Fm55AgMBAAGjgb8wgbwwOAYDVR0RBDEwL4IVc25pLmNsb3VkZmxhcmVzc2wu
+Y29tggsqLm5lcGhpLm9yZ4IJbmVwaGkub3JnMB0GA1UdJQQWMBQGCCsGAQUFBwMB
+BggrBgEFBQcDAjAMBgNVHRMBAf8EAjAAMA4GA1UdDwEB/wQEAwIFoDBDBgNVHR8E
+PDA6MDigNqA0hjJodHRwOi8vZ2F0ZXdheS56c2NhbGVydHdvLm5ldC96c2NhbGVy
+LXpzY3JsLS00LmNybDANBgkqhkiG9w0BAQsFAAOCAQEAvUvAu3f3ejmiOeeALZeZ
+7x7WIXoR82i0b1BTcY7K452Qmmb7bHjuRxVOy0MowtVnqJjUs+5m8MksScTlQazT
+UEmj2UAHAqLHfdlae8pHfaKw1nk/3L5gJ7j5yJ0VqRELpTyBUHgKLx1yJM98WY4Q
+bCGQONDq3u5XtLKF2iDYPTq4t99tJLZRpqMfW3kWGyrJFPJLb9ia55tIsXU91LD7
+jTV9daEhC86gNP2pAQfjZxiCvD5SyKnJLnIrcV1jaZqafg5821KE6ahvQ3Gn0rC6
+IjFfLMoly77TjYdfulNmuQWHoeBCQjy4t7DAbaCTWrE91bHLXmr9G4vGMe1Sulh1
+9w==
+-----END CERTIFICATE-----
+subject=C = US, ST = California, L = San Francisco, O = "Cloudflare, Inc.", CN = sni.cloudflaressl.com
+
+issuer=C = US, ST = California, O = Zscaler Inc., OU = Zscaler Inc., CN = "Zscaler Intermediate Root CA (zscalertwo.net) (t) "
+
+---
+No client certificate CA names sent
+Peer signing digest: SHA256
+Peer signature type: RSA-PSS
+Server Temp Key: ECDH, P-256, 256 bits
+---
+SSL handshake has read 3988 bytes and written 735 bytes
+Verification error: unable to get local issuer certificate
+---
+New, TLSv1.3, Cipher is TLS_AES_256_GCM_SHA384
+Server public key is 2048 bit
+Secure Renegotiation IS NOT supported
+Compression: NONE
+Expansion: NONE
+No ALPN negotiated
+Early data was not sent
+Verify return code: 20 (unable to get local issuer certificate)
+---

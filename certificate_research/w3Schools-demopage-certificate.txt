@@ -1,0 +1,64 @@
+CONNECTED(00000234)
+---
+Certificate chain
+ 0 s:CN = w3schools.com
+   i:C = US, ST = California, O = Zscaler Inc., OU = Zscaler Inc., CN = "Zscaler Intermediate Root CA (zscalertwo.net) (t) "
+ 1 s:C = US, ST = California, O = Zscaler Inc., OU = Zscaler Inc., CN = "Zscaler Intermediate Root CA (zscalertwo.net) (t) "
+   i:C = US, ST = California, O = Zscaler Inc., OU = Zscaler Inc., CN = Zscaler Intermediate Root CA (zscalertwo.net), emailAddress = support@zscaler.com
+ 2 s:C = US, ST = California, O = Zscaler Inc., OU = Zscaler Inc., CN = Zscaler Intermediate Root CA (zscalertwo.net), emailAddress = support@zscaler.com
+   i:C = US, ST = California, L = San Jose, O = Zscaler Inc., OU = Zscaler Inc., CN = Zscaler Root CA, emailAddress = support@zscaler.com
+---
+Server certificate
+-----BEGIN CERTIFICATE-----
+MIIFUzCCBDugAwIBAgIQf/+7zawHCVZsRDToH+AlZzANBgkqhkiG9w0BAQsFADCB
+jTELMAkGA1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWExFTATBgNVBAoMDFpz
+Y2FsZXIgSW5jLjEVMBMGA1UECwwMWnNjYWxlciBJbmMuMTswOQYDVQQDDDJac2Nh
+bGVyIEludGVybWVkaWF0ZSBSb290IENBICh6c2NhbGVydHdvLm5ldCkgKHQpIDAe
+Fw0yMjEwMjIwNzUyMjBaFw0yMjExMDUwNzUyMjBaMBgxFjAUBgNVBAMTDXczc2No
+b29scy5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDjTuFGftdV
+Ur58VRLXTxduUwGFXNiHw6KIhpqrcadKiVExo1vsgp8QNkHh0MxlPW0BcI18FAVk
++Hlyb2YbcMhD/aCkSKvvdueI40BTmaQVEaFm3odoMMnIK3n02JpQu/cnsbsHNyEa
+YH9TdJsyHcJf22WZr01V8H5RQEjMEfKRoFtG7vf6UGuIPDGfHUap6y+3t9ZjYB8s
+W3GXO1cMHTZkreiFFOFlbGOs5e0ZvHVuAUyZIIcYnUb3ZA058uQDKka90ATgjfGz
+Ur2BQ8YP92wcT8FBNG74oly7Fo7NIpnlr+MbBVzIQyZONP1TfJhdZRqQLP82RGro
+ukdHioe2Fm55AgMBAAGjggIhMIICHTAYBgNVHREEETAPgg13M3NjaG9vbHMuY29t
+MA4GA1UdDwEB/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIw
+DAYDVR0TAQH/BAIwADCCAX0GCisGAQQB1nkCBAIEggFtBIIBaQFnAHUA6D7Q2j71
+BjUy51covIlryQPTy9ERa+zraeF3fW0GvW4AAAGBHJzjNgAABAMARjBEAiBlBmIt
+NM61a74nmJtL0gTRM+/Bqk56Z0dHSQC6YWH0JAIgNBqUqSihO1zw0NqaLewXd+8+
+IECCb6ok+rF4mI2XkgsAdwA1zxkbv7FsV78PrUxtQsu7ticgJlHqP+Eq76gDwzvW
+TAAAAYEcnONDAAAEAwBIMEYCIQDzPlV5Xs/ymc0k5OnVNusPFPZ7BXzmbY9hCH9d
+GdeAOAIhAJSusbdV+vFEmuRzWi7xIWtXFRAT32ypUsQtin0ds12MAHUAs3N3B+GE
+UPhjhtYFqdwRCUp5LbFnDAuH3PADDnk2pZoAAAGBHJzjZAAABAMARjBEAiAT/zqB
+0TQZobIg7H+hRSNJU39vI1H49Dlz7w0Jj0xjdgIgIGv+r9x9+Y44E/SP1cesWrHl
+E6qJZJUCVJOEW6IJOdswQwYDVR0fBDwwOjA4oDagNIYyaHR0cDovL2dhdGV3YXku
+enNjYWxlcnR3by5uZXQvenNjYWxlci16c2NybC0tNC5jcmwwDQYJKoZIhvcNAQEL
+BQADggEBALuoxRxm+vLNIWHuJwbhZhCXDGEVcsYygHBdZjSZVDNZSdjJW7IusOdQ
+kwSo806E2+Wjan4lWnCV6t5WL3w1XJefy3GO10bRSf0pZqRUC7HSLzkFxGKMatXG
+cJCZaZWczGQN0O7dQJxhPGXKyY+HFnRKHMlJfdrpu2ZD7eOf48mCguSc7qKBdoIF
+rC2A76B1hFSa8q0BZMI6zzqcH6FohfK+ZN0UwITaetYbjMHWMFOEcKUBA4bYj1Da
+KLdX8fCGxp+TGj9P6rqFJtRwxRGINnLfHRqHLDEZU6PR2vufp556gpSNdMeq6Qw/
+b5Xzi3zbA1fKxvCuQ87seTuvA3EnW5k=
+-----END CERTIFICATE-----
+subject=CN = w3schools.com
+
+issuer=C = US, ST = California, O = Zscaler Inc., OU = Zscaler Inc., CN = "Zscaler Intermediate Root CA (zscalertwo.net) (t) "
+
+---
+No client certificate CA names sent
+Peer signing digest: SHA256
+Peer signature type: RSA-PSS
+Server Temp Key: ECDH, P-256, 256 bits
+---
+SSL handshake has read 4250 bytes and written 743 bytes
+Verification error: unable to get local issuer certificate
+---
+New, TLSv1.3, Cipher is TLS_AES_256_GCM_SHA384
+Server public key is 2048 bit
+Secure Renegotiation IS NOT supported
+Compression: NONE
+Expansion: NONE
+No ALPN negotiated
+Early data was not sent
+Verify return code: 20 (unable to get local issuer certificate)
+---
