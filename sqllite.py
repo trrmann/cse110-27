@@ -19,7 +19,7 @@ conn.commit()
 conn = sqlite3.connect('test_database')
 
 sql_query = pd.read_sql_query('''
-            SELECT * FROM system_options
+            SELECT * FROM products
           ''', conn)
 
 df = pd.DataFrame(sql_query, columns = ['',''])
