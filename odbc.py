@@ -15,7 +15,12 @@ import pyodbc
 #select @@servername
 
 conn = pyodbc.connect('driver={sql server};' 
-                      'server=gvx0wcopd08p;'
+                      #'server=gvx0wcopd03d.us.royalahold.net;'  #v6.4 dev
+                      #'server=gvx0wcopd08q.us.royalahold.net;'  #v6.4 qa
+                      #'server=gvx0wcopd08l.us.royalahold.net;'  #v6.4 qaue
+                      #'server=gvx0wcopd08s.us.royalahold.net;'  #v6.4 staging
+                      'server=gvx0wcopd08p.us.royalahold.net;'  #v6.4 prod
+                      #'server=gvx0wcopd03i.us.royalahold.net;'  #v7 integration
                       'database=logixrt;'
                       'uid="copient_logix";'
                       'pwd="app0mattox";'
