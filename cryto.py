@@ -25,7 +25,6 @@ ciphertext = key.public_key().encrypt(
     padding.OAEP(
         mgf=padding.MGF1(algorithm=hashes.SHA256()),
         algorithm=hashes.SHA256(),
-        algorithm=hashes.SHA256(),
         label=None
     )
 )
@@ -43,10 +42,12 @@ plaintext = key.decrypt(
 
 print(plaintext == message)
 print(key)
-print(key.private_bytes())
+print(key.private_bytes)
+#print(key.private_bytes())
 print(key.key_size)
 print(key.private_numbers())
-print(key.public_key().public_bytes())
+#print(key.public_key().public_bytes())
+print(key.public_key().public_bytes)
 print(key.sign)
 print(message)
 print(ciphertext)
