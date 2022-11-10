@@ -532,6 +532,7 @@ class Wordle():
     def set_secret_word(self, secret_word :str = None):
         if secret_word == None: secret_word = self.get_random().choice([*self.get_word_list().keys()]).lower()
         self.__data__[self.__secret_word_key__] = str(secret_word)
+        print(secret_word)
         return self
 
     def get_secret_word(self, secret_word :str = None):

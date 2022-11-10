@@ -1,3 +1,5 @@
 {
+    "python.defaultInterpreterPath": "C:/Program Files/Python310/python.exe",
+    "python.analysis.extraPaths": ["app", "c:/program files/python310/lib/site-packages"],
     "git.postCommitCommand": "sync"
 }
