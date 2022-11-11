@@ -36,6 +36,10 @@ class LogixSecureAPICalls():
     __dataKey__ = "data"
     __getMethod__ = "GET"
     __postMethod__ = "POST"
+    __pathDictPathKey__ = "path"
+    __pathDictMethodsKey__ = "methods"
+    __pathDictParmsSpecKey__ = "parmsSpec"
+    __pathDictDataSpecKey__ = "dataSpec"
 
     def __new__(cls, *args, **kwargs):
         return super().__new__(cls)
@@ -53,7 +57,7 @@ class LogixSecureAPICalls():
 
     def getPath(self, pathKey: str = None):
         if (pathKey == None) or (self.getPathDict() == None): return str(pathKey)
-        elif pathKey in dict(self.getPathDict()).keys(): return str(self.getPathDict()[pathKey])
+        elif pathKey in dict(self.getPathDict()).keys(): return str(self.getPathDict()[pathKey][self.__pathDictPathKey__])
         else: return str(pathKey)
 
     def getPathDict(self, defPathDict: dict = None):
@@ -262,9 +266,20 @@ class LogixSecureAPICalls():
 class LogixCustomerAPI(LogixSecureAPICalls):
     __defAPIBasePath__ = "Connectors/CustomerInquiry.asmx"
     __defPathDict__ = {
-        "pkStatus" : "CustomerPKStatus",
-        "exportPK" : "ExportCustomerPK"
+        "pkStatus" : {LogixSecureAPICalls.__pathDictPathKey__ : "CustomerPKStatus",
+                        LogixSecureAPICalls.__pathDictMethodsKey__ : ["GET"],
+                        LogixSecureAPICalls.__pathDictParmsSpecKey__ : {"0" : [{"required" : ["JobId"], "optional" : None}]},
+                        LogixSecureAPICalls.__pathDictDataSpecKey__ : {"0": [{"required" : None, "optional" : None}],
+                        LogixSecureAPICalls.__pathDictRespXMLFieldsSpecKey__ : {"0" : {"root":"CustPKStatus", "fields":[{"field":"Files","subFields":["string"]}, "ErrorMsg", "Status", "RecordsReturned", "JobId"]}}}
+                    },
+        "exportPK" : {LogixSecureAPICalls.__pathDictPathKey__ : "ExportCustomerPK",
+                        LogixSecureAPICalls.__pathDictMethodsKey__ : ["POST"],
+                        LogixSecureAPICalls.__pathDictParmsSpecKey__ : {"0" : [{"required" : None, "optional" : None}]},
+                        LogixSecureAPICalls.__pathDictDataSpecKey__ : {"0": [{"required" : ["GUID", "StartPK", "EncryptionKey", "InitializationVector"], "optional" : None}]},
+                        LogixSecureAPICalls.__pathDictRespXMLFieldsSpecKey__ : {"0" : {"root":"CustPKStatus", "fields":["ErrorMsg", "Status", "RecordsReturned", "JobId"]}}
+                    }
     }
+
     empty = None
 
     def __new__(cls, *args, **kwargs):
