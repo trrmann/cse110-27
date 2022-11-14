@@ -55,6 +55,66 @@ class LogixSecureAPICalls():
     def __repr__(self) -> str:
         return f"{type(self).__name__}(apiBasePath={self.getAPIBasePath()}, server={self.getServer()}, sharedKey={self.getSharedKey()}, secretKey={self.getSecretKey()}, GUID={self.getGUID()}, pathDictSize={self.getPathDictSize()})"
 
+
+        # "pkStatus" : {LogixSecureAPICalls.__pathDictPathKey__ : "CustomerPKStatus",
+        #                 LogixSecureAPICalls.__pathDictMethodsKey__ : ["GET"],
+        #                 LogixSecureAPICalls.__pathDictParmsSpecKey__ : {"0" : [{"required" : ["JobId"], "optional" : None}]},
+        #                 LogixSecureAPICalls.__pathDictDataSpecKey__ : {"0": [{"required" : None, "optional" : None}],
+        #                 LogixSecureAPICalls.__pathDictRespXMLFieldsSpecKey__ : {"0" : {"root":"CustPKStatus", "fields":[{"field":"Files","subFields":["string"]}, "ErrorMsg", "Status", "RecordsReturned", "JobId"]}}}
+
+    def getOptionalDataElementCount(self, pathKey: str = None, pathMethod: str = None, dataSpecIndex: int = 0):
+        return len(self.getOptionalDataSpec(pathKey, pathMethod, dataSpecIndex))
+
+    def getOptionalDataSpec(self, pathKey: str = None, pathMethod: str = None, dataSpecIndex: int = 0):
+        return self.getDataSpec(pathKey, pathMethod, dataSpecIndex)["optional"]
+
+    def getRequiredDataElementCount(self, pathKey: str = None, pathMethod: str = None, dataSpecIndex: int = 0):
+        return len(self.getRequiredDataSpec(pathKey, pathMethod, dataSpecIndex))
+
+    def getRequiredDataSpec(self, pathKey: str = None, pathMethod: str = None, dataSpecIndex: int = 0):
+        return self.getDataSpec(pathKey, pathMethod, dataSpecIndex)["required"]
+
+    def getDataSpec(self, pathKey: str = None, pathMethod: str = None, dataSpecIndex: int = 0):
+        return self.getDataSpecs(pathKey, pathMethod)[dataSpecIndex]
+
+    def getDataSpecCount(self, pathKey: str = None, pathMethod: str = None):
+        return len(self.getDataSpecs(pathKey, pathMethod))
+
+    def getDataSpecs(self, pathKey: str = None, pathMethod: str = None):
+        if (pathKey == None) or (self.getPathDict() == None): return str(pathKey)
+        if (pathMethod == None) or (self.getPathDict() == None) or (not (pathMethod in self.getMethods(pathKey))): return str(pathMethod)
+        elif pathKey in dict(self.getPathDict()).keys(): return str(self.getPathDict()[pathKey][self.__pathDictDataSpecKey__][self.getMethods(pathKey).index(pathMethod)])
+        else: return str(pathMethod)
+
+    def getOptionalParmCount(self, pathKey: str = None, pathMethod: str = None, parmsSpecIndex: int = 0):
+        return len(self.getOptionalParmsSpec(pathKey, pathMethod, parmsSpecIndex))
+
+    def getOptionalParmsSpec(self, pathKey: str = None, pathMethod: str = None, parmsSpecIndex: int = 0):
+        return self.getParmsSpec(pathKey, pathMethod, parmsSpecIndex)["optional"]
+
+    def getRequiredParmCount(self, pathKey: str = None, pathMethod: str = None, parmsSpecIndex: int = 0):
+        return len(self.getRequiredParmsSpec(pathKey, pathMethod, parmsSpecIndex))
+
+    def getRequiredParmsSpec(self, pathKey: str = None, pathMethod: str = None, parmsSpecIndex: int = 0):
+        return self.getParmsSpec(pathKey, pathMethod, parmsSpecIndex)["required"]
+
+    def getParmsSpec(self, pathKey: str = None, pathMethod: str = None, parmsSpecIndex: int = 0):
+        return self.getParmsSpecs(pathKey, pathMethod)[parmsSpecIndex]
+
+    def getParmsSpecCount(self, pathKey: str = None, pathMethod: str = None):
+        return len(self.getParmsSpecs(pathKey, pathMethod))
+
+    def getParmsSpecs(self, pathKey: str = None, pathMethod: str = None):
+        if (pathKey == None) or (self.getPathDict() == None): return str(pathKey)
+        if (pathMethod == None) or (self.getPathDict() == None) or (not (pathMethod in self.getMethods(pathKey))): return str(pathMethod)
+        elif pathKey in dict(self.getPathDict()).keys(): return str(self.getPathDict()[pathKey][self.__pathDictParmsSpecKey__][self.getMethods(pathKey).index(pathMethod)])
+        else: return str(pathMethod)
+
+    def getMethods(self, pathKey: str = None):
+        if (pathKey == None) or (self.getPathDict() == None): return str(pathKey)
+        elif pathKey in dict(self.getPathDict()).keys(): return str(self.getPathDict()[pathKey][self.__pathDictMethodsKey__])
+        else: return str(pathKey)
+
     def getPath(self, pathKey: str = None):
         if (pathKey == None) or (self.getPathDict() == None): return str(pathKey)
         elif pathKey in dict(self.getPathDict()).keys(): return str(self.getPathDict()[pathKey][self.__pathDictPathKey__])
