@@ -1,0 +1,108 @@
+/******************************************************************************
+START grid layout extra credit
+******************************************************************************/
+
+* {
+    box-sizing: border-box;
+}
+.grid1 {
+    padding: 2em 0;
+    background-color: lightgray;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+}
+.grid1 h1 {
+    grid-column: 1/13;
+    font-weight: bolder;
+}
+.grid2 {
+    grid-column: 2/11;
+    background-color: white;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);    
+}
+.grid2 h2 {
+    grid-column: 1/7;
+    padding: 1rem;
+    text-align: center;
+    font-weight: bolder;
+}
+.grid3 {
+    grid-column: 7/13;
+    padding: 1rem;
+    background-color:aquamarine;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);    
+}
+.grid3 h3 {
+    grid-column: 2/13;
+    text-align: left;
+    font-weight: bolder;
+}
+.grid4 {
+    grid-column: 4/11;
+    padding: 1rem 0;
+    background-color:aqua;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);    
+}
+.grid4 h2 {
+    grid-column: 2/13;
+    text-align: left;
+    font-weight: bolder;
+}
+section {
+    grid-column: 2/9;
+    padding: 1rem 0;
+    background-color: white;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);    
+}
+section h2 {
+    grid-column: 1/13;
+    text-align: left;
+    font-weight: bolder;
+}
+form {
+    grid-column: 2/7;
+    background-color:gold;
+    display: grid;
+    grid-template-columns: 1fr 5fr;
+}
+legend {
+    font-size: 20px;
+    font-weight: 700;
+}
+fieldset {
+    grid-column: 1/3;
+    padding: 1rem;
+}
+fieldset > div {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    grid-gap:0 1em;  /*depricated replaced by gap*/
+    /*gap:0 1em;*/
+    align-items: center;
+}
+label {
+    grid-column: 1/2;
+    text-align: right;
+    padding: 1rem;
+    width: 1fr;    
+    font-weight: bold;
+}
+input {
+    grid-column: 2/3;
+    text-align: left;
+    width: 2fr;    
+}
+button {
+    grid-column: 1/3;
+    padding: 1rem;
+    background-color:lightskyblue;    
+    font-weight: bolder;
+}
+section > div {
+    grid-column: 2/7;
+    padding: 1rem 0;
+}
